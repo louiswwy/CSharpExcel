@@ -10,6 +10,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using Excel;
+using OfficeOpenXml;
+using OfficeOpenXml.Drawing;
+using OfficeOpenXml.Drawing.Chart;
+using OfficeOpenXml.Style;
+using System.Text.RegularExpressions;
+
 //using Excel.
 
 namespace C_Excel
@@ -210,18 +216,134 @@ namespace C_Excel
             //3. DataSet - The result of each spreadsheet will be created in the result.Tables
             DataSet result = excelReader.AsDataSet();
 
+            dataGridView1.DataSource = result;
             //4. DataSet - Create column names from first row
-            excelReader.IsFirstRowAsColumnNames = true;
+            //excelReader.IsFirstRowAsColumnNames = true;
             //DataSet result = excelReader.AsDataSet();
-            while (excelReader.Read())
-            {
+            //while (excelReader.Read())
+            //{//
                 //excelReader.GetInt32(0);
-            }
+            //}
 
             //6. Free resources (IExcelDataReader is IDisposable)
             excelReader.Close();
         }
 
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string FileName;
+
+            FileName = OpenFile();
+
+            DataSet DS = LoadDataFromExcel(FileName);
+
+            DataTable DT = DS.Tables[0];
+            for (int i = 0; i < 4; i++)
+            {
+                DT.Rows.Remove(DT.Rows[1]);
+                //;
+            }
+
+            DataTable subDT = DT.Copy();
+            subDT.Clear();
+
+            foreach (DataRow dr in DT.Rows)
+            {
+                foreach (DataColumn dc in DT.Columns)
+                {
+                    //Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
+                    if (isExMatch())
+                    {
+                        string temp = dr[dc].ToString();
+                        dr[dc] = Convert.ToDateTime(dr[dc].ToString().Replace(" ", "").Substring(0, 5)).ToShortTimeString().ToString();
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                }
+            }
+            DT.Columns.Remove(DT.Columns[1]);
+            DT.Columns.Remove(DT.Columns[2]);
+            DT.Columns.Remove(DT.Columns[5]); 
+            DT.Columns.Remove(DT.Columns[6]);
+
+
+
+            /*for (int a = 0; a < 8; a++)
+            {
+                //subDT.Columns.Add(DT.Columns[a]);
+            }
+
+            DataColumn DIndex = DT.Columns.Add("ID", typeof(int));
+            DIndex.AutoIncrement = true;
+            DIndex.AutoIncrementSeed = -1;
+            DIndex.AutoIncrementStep = -1;
+            DIndex.ReadOnly = true;
+
+                
+            //if(DT.ta)
+            dataGridView1.DataSource = subDT;
+            //MessageBox.Show()
+            Update();*/
+        }
+
+        public string OpenFile()
+        {
+            string fileName = null;
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Multiselect = true;
+            fileDialog.Title = "请选择文件.";
+            fileDialog.Filter = "Excel97-2003文件|*.xls;*.xlt;*.xltm|Excel2007-2010|*.xlsx|所有文件(*.*)|*.*";
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                fileName = fileDialog.FileName;
+            }
+
+            return fileName;
+        }
+
+        public static DataSet LoadDataFromExcel(string filePath)
+        {
+            try
+            {
+                string strConn;
+                strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties='Excel 8.0;HDR=NO;IMEX=1'";
+                OleDbConnection OleConn = new OleDbConnection(strConn);
+                OleConn.Open();
+                String sql = "SELECT * FROM  [Sheet1$]";//可是更改Sheet名称，比如sheet2，等等   
+
+                OleDbDataAdapter OleDaExcel = new OleDbDataAdapter(sql, OleConn);
+                DataSet OleDsExcle = new DataSet();
+                OleDaExcel.Fill(OleDsExcle, "Sheet1");
+                OleConn.Close();
+                return OleDsExcle;
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("数据绑定Excel失败!失败原因：" + err.Message, "提示信息",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return null;
+            }
+        }
+
+        public bool isExMatch(string text, string patten)
+        {
+            bool _isMatch=false;
+            if (Regex.IsMatch(text, patten))
+                _isMatch = true;
+            else
+                _isMatch = false;
+            return _isMatch;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string a = textBox1.Text;
+            textBox2.Text = Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
+            //textBox2.Text=
+        }
 
     }
 }
