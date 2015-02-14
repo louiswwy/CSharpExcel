@@ -216,7 +216,7 @@ namespace C_Excel
                     foreach (DataColumn dc in DT.Columns)
                     {
                         //Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
-                        if (isExMatch(dr[dc].ToString(), "[0-9]\\d{0,1}+"))
+                        if (isExMatch(dr[dc].ToString(), @"^((20|21|22|23|[0-1]?\d)-[0-5]?\d$")) //验证正则表达式
                         {
                             string temp = dr[dc].ToString();
                             dr[dc] = Convert.ToDateTime(dr[dc].ToString().Replace(" ", "").Substring(0, 5)).ToShortTimeString().ToString();
