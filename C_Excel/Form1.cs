@@ -9,11 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using Excel;
-using OfficeOpenXml;
-using OfficeOpenXml.Drawing;
-using OfficeOpenXml.Drawing.Chart;
-using OfficeOpenXml.Style;
+
 using System.Text.RegularExpressions;
 
 //using Excel.
@@ -193,41 +189,7 @@ namespace C_Excel
             this.Text = "通信所" + (Convert.ToInt32(NowTime.Month) - 1).ToString() + "月份考勤";
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            string fileName = null;
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.Multiselect = true;
-            fileDialog.Title = "请选择文件.";
-            fileDialog.Filter = "Excel97-2003文件|*.xls;*.xlt;*.xltm|Excel2007-2010|*.xlsx|所有文件(*.*)|*.*";
-            if (fileDialog.ShowDialog() == DialogResult.OK)
-            {
-                fileName = fileDialog.FileName;
-            }
-
-            FileStream stream = File.Open(fileName, FileMode.Open, FileAccess.Read);
-
-            //1. Reading from a binary Excel file ('97-2003 format; *.xls)
-            IExcelDataReader excelReader = ExcelReaderFactory.CreateBinaryReader(stream);
-
-            //2. Reading from a OpenXml Excel file (2007 format; *.xlsx)
-            //IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
-
-            //3. DataSet - The result of each spreadsheet will be created in the result.Tables
-            DataSet result = excelReader.AsDataSet();
-
-            dataGridView1.DataSource = result;
-            //4. DataSet - Create column names from first row
-            //excelReader.IsFirstRowAsColumnNames = true;
-            //DataSet result = excelReader.AsDataSet();
-            //while (excelReader.Read())
-            //{//
-                //excelReader.GetInt32(0);
-            //}
-
-            //6. Free resources (IExcelDataReader is IDisposable)
-            excelReader.Close();
-        }
+      
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -235,39 +197,42 @@ namespace C_Excel
 
             FileName = OpenFile();
 
-            DataSet DS = LoadDataFromExcel(FileName);
-
-            DataTable DT = DS.Tables[0];
-            for (int i = 0; i < 4; i++)
+            if (FileName != "")
             {
-                DT.Rows.Remove(DT.Rows[1]);
-                //;
-            }
+                DataSet DS = LoadDataFromExcel(FileName);
 
-            DataTable subDT = DT.Copy();
-            subDT.Clear();
-
-            foreach (DataRow dr in DT.Rows)
-            {
-                foreach (DataColumn dc in DT.Columns)
+                DataTable DT = DS.Tables[0];
+                for (int i = 0; i < 4; i++)
                 {
-                    //Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
-                    if (isExMatch())
-                    {
-                        string temp = dr[dc].ToString();
-                        dr[dc] = Convert.ToDateTime(dr[dc].ToString().Replace(" ", "").Substring(0, 5)).ToShortTimeString().ToString();
-                    }
-                    else
-                    {
-                        continue;
-                    }
-
+                    DT.Rows.Remove(DT.Rows[1]);
+                    //;
                 }
+
+                DataTable subDT = DT.Copy();
+                subDT.Clear();
+
+                foreach (DataRow dr in DT.Rows)
+                {
+                    foreach (DataColumn dc in DT.Columns)
+                    {
+                        //Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
+                        if (isExMatch(dr[dc].ToString(), "[0-9]\\d{0,1}+"))
+                        {
+                            string temp = dr[dc].ToString();
+                            dr[dc] = Convert.ToDateTime(dr[dc].ToString().Replace(" ", "").Substring(0, 5)).ToShortTimeString().ToString();
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                    }
+                }
+                DT.Columns.Remove(DT.Columns[1]);
+                DT.Columns.Remove(DT.Columns[2]);
+                DT.Columns.Remove(DT.Columns[5]);
+                DT.Columns.Remove(DT.Columns[6]);
             }
-            DT.Columns.Remove(DT.Columns[1]);
-            DT.Columns.Remove(DT.Columns[2]);
-            DT.Columns.Remove(DT.Columns[5]); 
-            DT.Columns.Remove(DT.Columns[6]);
 
 
 
@@ -344,6 +309,7 @@ namespace C_Excel
             textBox2.Text = Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
             //textBox2.Text=
         }
+
 
     }
 }
