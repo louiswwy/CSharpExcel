@@ -210,21 +210,32 @@ namespace C_Excel
 
                 DataTable subDT = DT.Copy();
                 subDT.Clear();
-
+                int b = 0; int c = 0;
+                List<string> st = new List<string>();
                 foreach (DataRow dr in DT.Rows)
                 {
                     foreach (DataColumn dc in DT.Columns)
                     {
+                        b++;
+                        
+                        List<string > MathGroup=new List<string>();
+                        string a = dr[dc].ToString().Replace(" ", "");
                         //Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
-                        if (isExMatch(dr[dc].ToString(), @"^((20|21|22|23|[0-1]?\d)-[0-5]?\d$")) //验证正则表达式
+                        //if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(((20|21|22|23|[0-1]?\d):[0-5]?\d)-((20|21|22|23|[0-1]?\d):[0-5]?\d)$"))//&& isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(((20|21|22|23|[0-1]?\d):[0-5]?\d)-$") && isExMatch(dr[dc].ToString().Replace(" ", ""), @"^-((20|21|22|23|[0-1]?\d):[0-5]?\d)$")) //验证正则表达式
+                        if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^((20|21|22|23|[0-1]?\d):([0-5]?\d))-((20|21|22|23|[0-1]?\d):[0-5]?\d)$", out MathGroup))
                         {
                             string temp = dr[dc].ToString();
                             dr[dc] = Convert.ToDateTime(dr[dc].ToString().Replace(" ", "").Substring(0, 5)).ToShortTimeString().ToString();
+                            c++;
+                            textBox2.Text = c.ToString();
+                            //st.Add(MathGroup);
+
                         }
                         else
                         {
                             continue;
                         }
+                        
 
                     }
                 }
@@ -232,6 +243,7 @@ namespace C_Excel
                 DT.Columns.Remove(DT.Columns[2]);
                 DT.Columns.Remove(DT.Columns[5]);
                 DT.Columns.Remove(DT.Columns[6]);
+                dataGridView1.DataSource = DT;
             }
 
 
@@ -293,23 +305,45 @@ namespace C_Excel
             }
         }
 
-        public bool isExMatch(string text, string patten)
+        public bool isExMatch(string text, string patten, out List<string> Match)
         {
-            bool _isMatch=false;
-            if (Regex.IsMatch(text, patten))
+            bool _isMatch = false;
+            Regex Patten = new Regex(patten);
+            List<string> _match = new List<string>();
+            //if (Regex.IsMatch(text, patten))
+            if(Patten.Match(text).Success)
+            {
                 _isMatch = true;
+                for (int num = 1; num < Patten.Match(text).Groups.Count; num++)
+                {
+                    _match.Add(Patten.Match(text).Groups[num].Value);
+                }
+
+            }
             else
                 _isMatch = false;
+            Match = _match;
             return _isMatch;
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
+            List<string> b=new List<string>();
+            string d = ""; 
             string a = textBox1.Text;
-            textBox2.Text = Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
+            //textBox2.Text = Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
             //textBox2.Text=
+            //if (Regex.IsMatch(textBox1.Text.Replace(" ", "").Substring(0, 4), @"^((20|21|22|23|[0-1]?\d):[0-5]?\d)$"))
+            if (isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d):([0-5]?\d)-(20|21|22|23|[0-1]?\d):([0-5]?\d)$", out  b))
+            {
+                foreach (string c in b)
+                {
+                    d = d + c + "+++";
+                }
+                textBox2.Text = "true    " + d;
+            }
+            //return Regex.IsMatch(StrSource, @"^((20|21|22|23|[0-1]?\d):[0-5]?\d:[0-5]?\d)$");
         }
-
 
     }
 }
