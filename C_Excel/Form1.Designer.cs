@@ -36,11 +36,13 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label1 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.MemberList = new System.Windows.Forms.ListBox();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -110,6 +112,8 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.MemberList);
+            this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.button4);
             this.splitContainer1.Panel1.Controls.Add(this.textBox2);
             this.splitContainer1.Panel1.Controls.Add(this.textBox1);
@@ -123,6 +127,15 @@
             this.splitContainer1.Size = new System.Drawing.Size(636, 312);
             this.splitContainer1.SplitterDistance = 266;
             this.splitContainer1.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(74, 277);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "label1";
             // 
             // button4
             // 
@@ -139,7 +152,7 @@
             this.textBox2.Location = new System.Drawing.Point(3, 196);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(256, 74);
+            this.textBox2.Size = new System.Drawing.Size(58, 74);
             this.textBox2.TabIndex = 5;
             // 
             // textBox1
@@ -169,6 +182,14 @@
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.Size = new System.Drawing.Size(362, 308);
             this.dataGridView1.TabIndex = 0;
+            // 
+            // MemberList
+            // 
+            this.MemberList.FormattingEnabled = true;
+            this.MemberList.Location = new System.Drawing.Point(129, 169);
+            this.MemberList.Name = "MemberList";
+            this.MemberList.Size = new System.Drawing.Size(120, 95);
+            this.MemberList.TabIndex = 8;
             // 
             // Form1
             // 
@@ -207,6 +228,8 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ListBox MemberList;
     }
 }
 

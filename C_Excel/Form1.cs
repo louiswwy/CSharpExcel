@@ -25,6 +25,59 @@ namespace C_Excel
             public DataTable Item { get; set; }
         }
 
+        public class WorkTime
+        {
+            private DateTime _amTime;
+            public DateTime amTime
+            {
+                get { return this._amTime; }
+                set { this._amTime = value; }
+            }
+
+            private DateTime _pmTime;
+            public DateTime pmTime
+            {
+                get { return this._pmTime; }
+                set { this._pmTime = value; }
+            }
+
+            public WorkTime(DateTime AmTime, DateTime PmTime)
+            {
+                this.amTime = AmTime;
+                this.pmTime = pmTime;
+            }
+        }
+        public class Member_Communications
+        {
+            private string _name;
+            public string name{
+                get { return this._name; }
+                set { this._name = value; }
+            }
+
+            private WorkTime _workTime;
+            public WorkTime workTime
+            {
+                get { return this._workTime; }
+                set { this._workTime = value; }
+            }
+
+            public Member_Communications()
+            {                
+            }
+            //private List<DateTime> _
+            public Member_Communications(string Name)
+            {
+                this.name = Name;
+            }
+
+            public Member_Communications(string Name,WorkTime WorkTime)
+            {
+                this.name = Name;
+                this.workTime = WorkTime;
+            }
+        }
+
         public DateTime NowTime;
         public Form1()
         {
@@ -119,9 +172,7 @@ namespace C_Excel
                     {
 
                     }
-
-
-                    conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;" + @"Data Source=" + excelFilename + ";" + "Extended Properties=\"Excel 12.0 Xml;HDR=No\"";
+                    conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;" + @"Data Source=" + excelFilename + ";" + "Extended Properties=\"Excel 12.0 Xml;HDR=No;IMEX=1 ";
                     conn.Open();
                     OleDbDataAdapter da = new OleDbDataAdapter("select * from [Sheet1$]", conn);
                     var ds = new DataSet();
@@ -163,6 +214,7 @@ namespace C_Excel
             }
         }
 
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
@@ -197,73 +249,125 @@ namespace C_Excel
 
             FileName = OpenFile();
 
-            if (FileName != "")
+            try
             {
-                DataSet DS = LoadDataFromExcel(FileName);
-
-                DataTable DT = DS.Tables[0];
-                for (int i = 0; i < 4; i++)
+                if (FileName != "")
                 {
-                    DT.Rows.Remove(DT.Rows[1]);
-                    //;
-                }
+                    DataSet DS = LoadDataFromExcel(FileName);
 
-                DataTable subDT = DT.Copy();
-                subDT.Clear();
-                int b = 0; int c = 0;
-                List<string> st = new List<string>();
-                foreach (DataRow dr in DT.Rows)
-                {
-                    foreach (DataColumn dc in DT.Columns)
+                    DataTable DT = DS.Tables[0];
+
+                    List<string> st = new List<string>();
+                    //最晚上班时间
+                    DateTime LimitShowUpTime = Convert.ToDateTime("08:46:00");
+                    //最早下班时间
+                    DateTime LimitDismissTime = Convert.ToDateTime("17:30:00");
+
+                    List<Member_Communications> ListMemberSchedule = new List<Member_Communications>();
+
+                    foreach (DataRow dr in DT.Rows)
                     {
-                        b++;
-                        
-                        List<string > MathGroup=new List<string>();
-                        string a = dr[dc].ToString().Replace(" ", "");
-                        //Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
-                        //if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(((20|21|22|23|[0-1]?\d):[0-5]?\d)-((20|21|22|23|[0-1]?\d):[0-5]?\d)$"))//&& isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(((20|21|22|23|[0-1]?\d):[0-5]?\d)-$") && isExMatch(dr[dc].ToString().Replace(" ", ""), @"^-((20|21|22|23|[0-1]?\d):[0-5]?\d)$")) //验证正则表达式
-                        if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^((20|21|22|23|[0-1]?\d):([0-5]?\d))-((20|21|22|23|[0-1]?\d):[0-5]?\d)$", out MathGroup))
+                        foreach (DataColumn dc in DT.Columns)
                         {
-                            string temp = dr[dc].ToString();
-                            dr[dc] = Convert.ToDateTime(dr[dc].ToString().Replace(" ", "").Substring(0, 5)).ToShortTimeString().ToString();
-                            c++;
-                            textBox2.Text = c.ToString();
-                            //st.Add(MathGroup);
+
+                            List<string> MathGroup = new List<string>();
+                            string a = dr[dc].ToString().Replace(" ", "");
+                            List<string> _appMemberName = new List<string>(); //已便利过得员工的名字列表
+                            List<string> MemberName = new List<string>();
+
+                            //尚未便利过任何员工时 和 检测到的员工名称与列表中的最后一个不同
+                            if ((isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{3})$", out MemberName) && MemberName[0] != "通信所" && _appMemberName.Count == 0)
+                                || (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) && MemberName[0] != "通信所" && _appMemberName[_appMemberName.Count - 1] != MemberName[0]))
+                            {
+                                MessageBox.Show("" + MemberName[0]);
+                                Member_Communications MemberSchedule = new Member_Communications(MemberName[0]);
+                                if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup)
+                                || isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out MathGroup)
+                                || isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out MathGroup)
+                                || isExMatch(dr[dc].ToString().Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
+                                {
+                                    //foreach (string str in MathGroup)
+                                    {
+                                        dr[dc] = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
+                                    }
+                                }
+                                #region no use
+                                /*else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out MathGroup))
+                                {
+                                    //foreach (string str in MathGroup)
+                                    {
+                                        dr[dc] = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
+                                    }
+                                }*/
+                                /*else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out MathGroup))
+                                {
+                                    //foreach (string str in MathGroup)
+                                    {
+                                        dr[dc] = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
+                                    }
+                                }*/
+                                /*else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
+                                {
+                                    //foreach (string str in MathGroup)
+                                    {
+                                        dr[dc] = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
+                                    }
+                                }*/
+                                //if (isExMatch(textBox1.Text.Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out b))
+                                /*else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out MathGroup))
+                                {
+                                    dr[dc] = "星期" + MathGroup[1];
+                                }*/
+                                #endregion
+                                else if (dr[dc].ToString().Replace(" ", "") == "")
+                                {
+                                    dr[dc] = dr[dc];
+                                }
+                                else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^[0].\d*$", out MathGroup))
+                                {
+                                    //dr[dc] = "-+-" +/*Convert.ToDateTime(*//*Convert.ToDateTime(dr[dc])*//*).ToString() + "--error--"*/ "-+-";
+                                }
+                                //u4E00-\u9FA5
+                                else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{3})$", out MathGroup))
+                                {
+                                    dr[dc] = dr[dc] + "-" + MathGroup[0];
+                                }
+
+                                else
+                                {
+                                    continue;
+                                }
+                            }
 
                         }
-                        else
-                        {
-                            continue;
-                        }
-                        
-
                     }
+                    dataGridView1.DataSource = DT;
                 }
-                DT.Columns.Remove(DT.Columns[1]);
-                DT.Columns.Remove(DT.Columns[2]);
-                DT.Columns.Remove(DT.Columns[5]);
-                DT.Columns.Remove(DT.Columns[6]);
-                dataGridView1.DataSource = DT;
-            }
 
 
 
-            /*for (int a = 0; a < 8; a++)
-            {
-                //subDT.Columns.Add(DT.Columns[a]);
-            }
+                /*for (int a = 0; a < 8; a++)
+                {
+                    //subDT.Columns.Add(DT.Columns[a]);
+                }
 
-            DataColumn DIndex = DT.Columns.Add("ID", typeof(int));
-            DIndex.AutoIncrement = true;
-            DIndex.AutoIncrementSeed = -1;
-            DIndex.AutoIncrementStep = -1;
-            DIndex.ReadOnly = true;
+                DataColumn DIndex = DT.Columns.Add("ID", typeof(int));
+                DIndex.AutoIncrement = true;
+                DIndex.AutoIncrementSeed = -1;
+                DIndex.AutoIncrementStep = -1;
+                DIndex.ReadOnly = true;
 
                 
-            //if(DT.ta)
-            dataGridView1.DataSource = subDT;
-            //MessageBox.Show()
-            Update();*/
+                //if(DT.ta)
+                dataGridView1.DataSource = subDT;
+                //MessageBox.Show()
+                Update();*/
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("" + ex);
+            }
         }
 
         public string OpenFile()
@@ -276,6 +380,7 @@ namespace C_Excel
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
                 fileName = fileDialog.FileName;
+                //fileType=fileDialog.f
             }
 
             return fileName;
@@ -286,7 +391,8 @@ namespace C_Excel
             try
             {
                 string strConn;
-                strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties='Excel 8.0;HDR=NO;IMEX=1'";
+                //         Provider=Microsoft.Ace.OleDb.12.0;"  Provider=Microsoft.Jet.OLEDB.4.0                     12/8
+                strConn = "Provider=Microsoft.Ace.OleDb.12.0;Data Source=" + filePath + ";Extended Properties='Excel 8.0;HDR=NO;IMEX=1'";
                 OleDbConnection OleConn = new OleDbConnection(strConn);
                 OleConn.Open();
                 String sql = "SELECT * FROM  [Sheet1$]";//可是更改Sheet名称，比如sheet2，等等   
@@ -334,13 +440,30 @@ namespace C_Excel
             //textBox2.Text = Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
             //textBox2.Text=
             //if (Regex.IsMatch(textBox1.Text.Replace(" ", "").Substring(0, 4), @"^((20|21|22|23|[0-1]?\d):[0-5]?\d)$"))
-            if (isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d):([0-5]?\d)-(20|21|22|23|[0-1]?\d):([0-5]?\d)$", out  b))
+            if (isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b) 
+                //|| isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d:[0-5]?\d)$", out b) 
+                || isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out b)
+                || isExMatch(textBox1.Text.Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b))
             {
                 foreach (string c in b)
                 {
                     d = d + c + "+++";
                 }
                 textBox2.Text = "true    " + d;
+            }
+            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out b))
+            {
+                textBox2.Text = "true    " + b[0];
+
+            }
+            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out b))
+            {
+                textBox2.Text = "true    " + b[0];
+            }
+            //
+            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"(^[\u4e00-\u9fa5]{3})$", out b))
+            {
+                textBox2.Text = "true    " + b[0];
             }
             //return Regex.IsMatch(StrSource, @"^((20|21|22|23|[0-1]?\d):[0-5]?\d:[0-5]?\d)$");
         }
