@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.IO;
 
 using System.Text.RegularExpressions;
+using System.Data.Odbc;
 
 //using Excel.
 
@@ -120,6 +121,7 @@ namespace C_Excel
             }
         }
 
+        public List<int> ListNotEmptyCol = new List<int>();
         public List<WorkTime> listWorkTime; //上班时间
         public static List<Member_Communications> MemberSchedules=new List<Member_Communications>();
         //本地电脑时间.
@@ -167,7 +169,7 @@ namespace C_Excel
                     {
                         foreach (var item in query)
                         {
-                            listBox1.Items.Add(item.ToString());
+                            _boxList.Items.Add(item.ToString());
                         }
                     }
                     else
@@ -315,10 +317,15 @@ namespace C_Excel
                     List<string> _checkedMemberName = new List<string>(); //已遍历过得员工的名字列表
                     List<string> MemberName = new List<string>();
 
+                    int Nrow = 0; int Ncol = 0;
                     foreach (DataRow dr in DT.Rows)
                     {
+                        Nrow++;
+                        Ncol = 0;
                         foreach (DataColumn dc in DT.Columns)
                         {
+
+                            Ncol++;
                             List<string> MathGroup = new List<string>();
                             string a = dr[dc].ToString().Replace(" ", "");
 
@@ -334,7 +341,7 @@ namespace C_Excel
                                 _begin = true;
                                 if (MemberName.Count != 0 && MemberName[0] != "通信所")// &&  (_appMemberName.Count == 0||_appMemberName[_appMemberName.Count - 1] != MemberName[0]))
                                 {
-                                    MessageBox.Show("" + MemberName[0]);
+                                    //MessageBox.Show("" + MemberName[0] + "__" + Nrow.ToString() + "__" + Ncol.ToString());
 
                                     if (_checkedMemberName.Count == 0)//|| _checkedMemberName[_checkedMemberName.Count - 1].name != MemberName[0])
                                     {
@@ -389,7 +396,8 @@ namespace C_Excel
                                     listWorkTime.Add(_workTime);
                                 }
                             }
-                                    //时间格式为xx:xx-
+                                
+                                //时间格式为xx:xx-
                             else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out MathGroup))
                             {
                                 //foreach (string str in MathGroup)
@@ -410,11 +418,12 @@ namespace C_Excel
                                     listWorkTime.Add(_workTime);
                                 }
                             }
-                                    //if (isExMatch(textBox1.Text.Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out b))
-                                    /*else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out MathGroup))
-                                    {
-                                        dr[dc] = "星期" + MathGroup[1];
-                                    }*/
+                            
+                            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"^([0-3]\d)一|二|三|四|五|六|日$", out MathGroup))
+                                    //else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out MathGroup))
+                            {
+                                dr[dc] = "星期" + MathGroup[1];
+                            }
                             else if (dr[dc].ToString().Replace(" ", "") == "")
                             {
                                 dr[dc] = dr[dc];
@@ -624,6 +633,57 @@ namespace C_Excel
                 textBox2.Text = "true    " + b[0];
             }
             //return Regex.IsMatch(StrSource, @"^((20|21|22|23|[0-1]?\d):[0-5]?\d:[0-5]?\d)$");
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string FilePath = "";
+            //文件路径
+            FilePath = OpenFile();
+
+            PrintData(FilePath);
+        }
+
+        public List<int> FindColNumber()
+        {
+            return null;
+        }
+        public void PrintData(string filePath)
+        {
+            OdbcConnection conn = this.GetConnection(filePath);
+            //查询语句，就是SQL语句嘛
+            string strComm = "select * from [Sheet1$]";
+            //创建查询命令，也很熟悉吧
+            OdbcCommand comm = new OdbcCommand(strComm, conn);
+            //别忘了，访问Excel也是要打开连接的
+            conn.Open();
+            //Reader这个类就再熟悉不过了吧，和SqlDataReader基本上是一样的
+            OdbcDataReader reader = comm.ExecuteReader();
+            //Console.WriteLine("姓名\t学号\t年龄\t性别");
+
+            //读取Reader中的数据，打印到屏幕上
+            if (reader != null)
+            {
+                while (reader.Read())
+                {
+                    StringBuilder strLine = new StringBuilder();
+                    for (int i = 0; i < reader.FieldCount; ++i)
+                    {
+                        strLine.Append(reader[i].ToString() + "\t");
+                    }
+                    Console.WriteLine(strLine.ToString());
+                }
+            }
+        }
+
+        private OdbcConnection GetConnection(string FilePath)
+        {
+            //连接字符串
+            //string strConn = "Driver={Microsoft Excel Driver (*.xls)};DriverId=790;Dbq=D:\\test.xls;DefaultDir=c:\\mypath";
+            string strConn = "Provider=Microsoft.Ace.OleDb.12.0;Data Source=" + FilePath + ";Extended Properties='Excel 8.0;HDR=NO;IMEX=1'";
+            //创建连接，和SQL Server差不多，就是SqlConnection变成了OdbcConnection
+            OdbcConnection conn = new OdbcConnection(strConn);
+            return conn;
         }
 
     }
