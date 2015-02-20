@@ -323,8 +323,38 @@ namespace C_Excel
                         Nrow++;
                         Ncol = 0;
                         foreach (DataColumn dc in DT.Columns)
-                        {
+                        { 
+                            Ncol++;
+                            List<string> inDate = new List<string>();
+                            if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out inDate))
+                            {
+                                DateTime currentDate = NowTime;
+                                int lastMoth = Convert.ToInt32(currentDate.Month)-1;
+                                int currentyear = Convert.ToInt32(currentDate.Year);
 
+                                StringBuilder DateZh = new StringBuilder();
+                                DateZh.Append(currentyear.ToString() + "-" + lastMoth.ToString() + "-" + inDate[0] + "-星期" + inDate[1]);
+
+                                StringBuilder StartTime = new StringBuilder();
+                                StartTime.Append(currentyear.ToString() + "/" + lastMoth.ToString() + "/" + inDate[0]);
+
+                                StringBuilder StopTime = new StringBuilder();
+                                StopTime.Append(currentyear.ToString() + "/" + lastMoth.ToString() + "/" + inDate[0]);
+
+                                dr[dc] = DateZh;
+                                Convert.ToDateTime(StartTime.ToString());
+                                continue;
+                            }
+                        }
+                    }
+
+                    #region 111
+                    /*foreach (DataRow dr in DT.Rows)
+                    {
+                        Nrow++;
+                        Ncol = 0;
+                        foreach (DataColumn dc in DT.Columns)
+                        {
                             Ncol++;
                             List<string> MathGroup = new List<string>();
                             string a = dr[dc].ToString().Replace(" ", "");
@@ -370,9 +400,9 @@ namespace C_Excel
                             
                             //当时间格式为xx:xx-yy:yy时
                             if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
-                                    /*|| isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out MathGroup)
-                                    || isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out MathGroup)
-                                    || isExMatch(dr[dc].ToString().Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))*/
+                                    //|| isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out MathGroup)
+                                    //|| isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out MathGroup)
+                                    //|| isExMatch(dr[dc].ToString().Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
                                    
                             {
                                 //foreach (string str in MathGroup)
@@ -435,11 +465,10 @@ namespace C_Excel
                                 //dr[dc] = "-+-" +Convert.ToDateTime(Convert.ToDateTime(dr[dc])).ToString() + "--error--" "-+-";
                             }
                                     //u4E00-\u9FA5 与上级重复
-                                    /*else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{3})$", out MathGroup))
-                                    {
-                                        dr[dc] = dr[dc] + "-" + MathGroup[0];
-                                    }*/
-                                
+                                    //else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{3})$", out MathGroup))
+                                    //{
+                                    //    dr[dc] = dr[dc] + "-" + MathGroup[0];
+                                    //}                                
                             else
                             {
                                 continue;
@@ -449,10 +478,11 @@ namespace C_Excel
                             //}
 
                         }
-                    }
+                    }*/
+                    #endregion
                     dataGridView1.DataSource = DT;
 
-                    WorkingPassion(MemberSchedules);
+                    //WorkingPassion(MemberSchedules);
                 }
 
 
@@ -473,6 +503,7 @@ namespace C_Excel
                 dataGridView1.DataSource = subDT;
                 //MessageBox.Show()
                 Update();*/
+                    
             }
             catch (Exception ex)
             {
@@ -684,6 +715,12 @@ namespace C_Excel
             //创建连接，和SQL Server差不多，就是SqlConnection变成了OdbcConnection
             OdbcConnection conn = new OdbcConnection(strConn);
             return conn;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Calender cal = new Calender();
+            cal.Show();
         }
 
     }
