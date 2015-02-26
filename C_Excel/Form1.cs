@@ -295,7 +295,7 @@ namespace C_Excel
         }
 
       
-
+        //当遇到名字或者 "11 一 "类似的格式时.
         private void button3_Click(object sender, EventArgs e)
         {
             string FilePath = "";
@@ -331,7 +331,7 @@ namespace C_Excel
                                 DateTime currentDate = NowTime;
                                 int lastMoth = Convert.ToInt32(currentDate.Month)-1;
                                 int currentyear = Convert.ToInt32(currentDate.Year);
-
+                                //将数据转换为 年/月/日/星期 格式
                                 StringBuilder DateZh = new StringBuilder();
                                 DateZh.Append(currentyear.ToString() + "-" + lastMoth.ToString() + "-" + inDate[0] + "-星期" + inDate[1]);
 
@@ -628,43 +628,7 @@ namespace C_Excel
             textBox2.Text = StatueOfEmployer;
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            List<string> b=new List<string>();
-            string d = ""; 
-            string a = textBox1.Text;
-            //textBox2.Text = Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
-            //textBox2.Text=
-            //if (Regex.IsMatch(textBox1.Text.Replace(" ", "").Substring(0, 4), @"^((20|21|22|23|[0-1]?\d):[0-5]?\d)$"))
-            if (isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b) 
-                //|| isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d:[0-5]?\d)$", out b) 
-                || isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out b)
-                || isExMatch(textBox1.Text.Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b))
-            {
-                foreach (string c in b)
-                {
-                    d = d + c + "+++";
-                }
 
-                CompareTime(Convert.ToDateTime(b[0]), Convert.ToDateTime(b[1]));
-                //textBox2.Text = "true    " + d;
-            }
-            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out b))
-            {
-                textBox2.Text = "true    " + b[0];
-
-            }
-            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out b))
-            {
-                textBox2.Text = "true    " + b[0];
-            }
-            //
-            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"(^[\u4e00-\u9fa5]{3})$", out b))
-            {
-                textBox2.Text = "true    " + b[0];
-            }
-            //return Regex.IsMatch(StrSource, @"^((20|21|22|23|[0-1]?\d):[0-5]?\d:[0-5]?\d)$");
-        }
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -717,10 +681,50 @@ namespace C_Excel
             return conn;
         }
 
-        private void button5_Click(object sender, EventArgs e)
+
+
+        private void B_Calendar_Click(object sender, EventArgs e)
         {
             Calender cal = new Calender();
             cal.Show();
+        }
+
+        private void B_Test_Click(object sender, EventArgs e)
+        {
+            List<string> b = new List<string>();
+            string d = "";
+            string a = textBox1.Text;
+            //textBox2.Text = Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
+            //textBox2.Text=
+            //if (Regex.IsMatch(textBox1.Text.Replace(" ", "").Substring(0, 4), @"^((20|21|22|23|[0-1]?\d):[0-5]?\d)$"))
+            if (isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b)
+                //|| isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d:[0-5]?\d)$", out b) 
+                || isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out b)
+                || isExMatch(textBox1.Text.Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b))
+            {
+                foreach (string c in b)
+                {
+                    d = d + c + "+++";
+                }
+
+                CompareTime(Convert.ToDateTime(b[0]), Convert.ToDateTime(b[1]));
+                //textBox2.Text = "true    " + d;
+            }
+            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out b))
+            {
+                textBox2.Text = "true    " + b[0];
+
+            }
+            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out b))
+            {
+                textBox2.Text = "true    " + b[0];
+            }
+            //
+            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"(^[\u4e00-\u9fa5]{3})$", out b))
+            {
+                textBox2.Text = "true    " + b[0];
+            }
+            //return Regex.IsMatch(StrSource, @"^((20|21|22|23|[0-1]?\d):[0-5]?\d:[0-5]?\d)$");
         }
 
     }
