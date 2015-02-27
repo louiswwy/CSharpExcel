@@ -131,9 +131,21 @@ namespace C_Excel
         public DateTime NowTime;
 
         //最晚上班时间
-        public static DateTime LimitShowUpTime = Convert.ToDateTime("08:46:00");
+        public static DateTime _limitShowUpTime;// = Convert.ToDateTime("08:46:00");       
+        public DateTime SetLimShowUpTime
+        {
+            get { return _limitShowUpTime; }
+            set { _limitShowUpTime = value; }
+        }
+
         //最早下班时间
-        public static DateTime LimitDismissTime = Convert.ToDateTime("17:30:00");
+        public static DateTime _limitDismissTime;// = Convert.ToDateTime("17:30:00");
+        public DateTime SetLimDissmisTime
+        {
+            get { return _limitDismissTime; }
+            set { _limitDismissTime = value; }
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -279,6 +291,7 @@ namespace C_Excel
         {
             splitContainer1.IsSplitterFixed=false;// 1.FixedPanel=FixedPanel.Panel1
             StartTimer();
+            LoadWorkTime();
         }
 
         public void StartTimer()
@@ -561,7 +574,14 @@ namespace C_Excel
             try
             {
                 XmlDocument xmldoc = new XmlDocument();
-                xmldoc.Load(@"..\..\DataFile\WorkTime.xml");    //读取指定的XML文档
+                try
+                {
+                    xmldoc.Load(@"..\..\DataFile\WorkTime.xml");    //读取指定的XML文档                    
+                }
+                catch (Exception)
+                {
+                    CreateXml(@"..\..\DataFile\WorkTime.xml");//如果程序没有找到xml文件，则新建一个
+                }
                 XmlNode NodeWorkTime = xmldoc.DocumentElement;  //读取xml的根节点
 
                 foreach (XmlNode node in NodeWorkTime.ChildNodes)//循环子节点
@@ -571,7 +591,12 @@ namespace C_Excel
                         case "ShowUpTime":
                             if (node.InnerText != "")
                             {
-                                LimitShowUpTime = Convert.ToDateTime(node.InnerText);
+                                this.SetLimShowUpTime = Convert.ToDateTime(node.InnerText);
+                            }
+                            else
+                            {
+                                node.InnerText = "8:46";
+                                xmldoc.Save(@"..\..\DataFile\WorkTime.xml");
                             }
 
                             break;
@@ -579,7 +604,12 @@ namespace C_Excel
                         case "dissmisTime":
                             if (node.InnerText != "")
                             {
-                                LimitDismissTime = Convert.ToDateTime(node.InnerText);
+                                this.SetLimDissmisTime = Convert.ToDateTime(node.InnerText);
+                            }
+                            else
+                            {
+                                node.InnerText = "17:30";
+                                xmldoc.Save(@"..\..\DataFile\WorkTime.xml");
                             }
                             break;
                     }
@@ -589,6 +619,22 @@ namespace C_Excel
             {
                 MessageBox.Show("" + ex, "错误");
             }
+        }
+
+        public void CreateXml(string path)
+        {
+            XmlDocument xmldoc = new XmlDocument();
+            XmlNode xmlnode = xmldoc.CreateNode(XmlNodeType.XmlDeclaration, "", "");//加入XML的声明段落
+            xmldoc.AppendChild(xmlnode);
+            XmlElement xmlelem = xmldoc.CreateElement("workTime");
+
+            XmlElement xmlChilElem1 = xmldoc.CreateElement("ShowUpTime");
+            XmlElement xmlChilElem2 = xmldoc.CreateElement("dissmisTime");
+            xmlelem.AppendChild(xmlChilElem1);
+            xmlelem.AppendChild(xmlChilElem2);
+
+            xmldoc.AppendChild(xmlelem);
+            xmldoc.Save(path);// @"..\..\DataFile\WorkTime.xml");
         }
         public bool isExMatch(string text, string patten, out List<string> Match)
         {
@@ -641,7 +687,7 @@ namespace C_Excel
                 {
                     if (wt.amTime != null && wt.pmTime != null)
                     {
-                        if (CompareTime(Convert.ToDateTime(wt.amTime.ToString()), LimitShowUpTime))
+                        if (CompareTime(Convert.ToDateTime(wt.amTime.ToString()), this.SetLimShowUpTime))
                         {
                             _late++;
                         }
@@ -761,18 +807,26 @@ namespace C_Excel
             {
                 textBox2.Text = "true    " + b[0];
             }
+            else
+            {
+                MessageBox.Show("");
+            }
             //return Regex.IsMatch(StrSource, @"^((20|21|22|23|[0-1]?\d):[0-5]?\d:[0-5]?\d)$");
         }
 
         private void 设置ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             WfSetting wf = new WfSetting();
-            wf.Show();
+            //wf.Show();
+            wf.Owner = this;
+            wf.ShowDialog(this);
+
+            wf.Close();
         }
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            textBox1.Text = LimitShowUpTime.ToString();
+            textBox1.Text = this.SetLimShowUpTime.ToString();
         }
     }
 }
