@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
+using System.Xml;
+
 using System.Text.RegularExpressions;
 using System.Data.Odbc;
 
@@ -90,7 +92,8 @@ namespace C_Excel
                 this.pmTime = pmTime;
             }
         }
-        public class Member_Communications
+
+        public class Member_Departement_Communications
         {
             private string _name;
             public string name{
@@ -105,16 +108,16 @@ namespace C_Excel
                 set { this._workTime = value; }
             }
 
-            public Member_Communications()
+            public Member_Departement_Communications()
             {                
             }
             //private List<DateTime> _
-            public Member_Communications(string Name)
+            public Member_Departement_Communications(string Name)
             {
                 this.name = Name;
             }
 
-            public Member_Communications(string Name, List<WorkTime> WorkTime)
+            public Member_Departement_Communications(string Name, List<WorkTime> WorkTime)
             {
                 this.name = Name;
                 this.workTime = WorkTime;
@@ -123,14 +126,14 @@ namespace C_Excel
 
         public List<int> ListNotEmptyCol = new List<int>();
         public List<WorkTime> listWorkTime; //上班时间
-        public static List<Member_Communications> MemberSchedules=new List<Member_Communications>();
+        public static List<Member_Departement_Communications> MemberSchedules=new List<Member_Departement_Communications>();
         //本地电脑时间.
         public DateTime NowTime;
 
         //最晚上班时间
-        public DateTime LimitShowUpTime = Convert.ToDateTime("08:46:00");
+        public static DateTime LimitShowUpTime = Convert.ToDateTime("08:46:00");
         //最早下班时间
-        public DateTime LimitDismissTime = Convert.ToDateTime("17:30:00");
+        public static DateTime LimitDismissTime = Convert.ToDateTime("17:30:00");
         public Form1()
         {
             InitializeComponent();
@@ -208,17 +211,17 @@ namespace C_Excel
                 {
                     //
                     /*if (Path.GetExtension(path) == ".xls")
-            {
-                oledbConn = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;
-                Data Source=" + path + ";
-                Extended Properties=\"Excel 8.0;HDR=Yes;IMEX=2\"");
-            }
-            else if (Path.GetExtension(path) == ".xlsx")
-            {
-                oledbConn = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;
-                Data Source=" + path + ";
-                Extended Properties='Excel 12.0;HDR=YES;IMEX=1;';");
-            }*/
+                    {
+                    oledbConn = new OleDbConnection("Provider=Micrsoft.Jet.OLEDB.4.0;
+                                    Data Source=" + path + ";
+                                    Extended Properties=\"Excel 8.0;HDR=Yes;IMEX=2\"");
+                                    }
+                                    else if (Path.GetExtension(path) == ".xlsx")
+                                    {
+                                    oledbConn = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;
+                                    Data Source=" + path + ";
+                                    Extended Properties='Excel 12.0;HDR=YES;IMEX=1;';");
+                                    }*/
                     ///
                     if (Path.GetExtension(excelFilename) == ".xls")
                     {
@@ -313,7 +316,7 @@ namespace C_Excel
                     List<string> st = new List<string>();
 
 
-                    List<Member_Communications> ListMemberSchedule = new List<Member_Communications>(); //全员列表
+                    List<Member_Departement_Communications> ListMemberSchedule = new List<Member_Departement_Communications>(); //全员列表
                     List<string> _checkedMemberName = new List<string>(); //已遍历过得员工的名字列表
                     List<string> MemberName = new List<string>();
 
@@ -365,7 +368,7 @@ namespace C_Excel
                             }
                             bool _begin = false;
                             //尚未便利过任何员工时 和 检测到的员工名称与列表中的最后一个不同
-                            if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{3})$", out MemberName) || _begin == true)// && MemberName[0] != "通信所" && _appMemberName.Count == 0)
+                            if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) || _begin == true)// && MemberName[0] != "通信所" && _appMemberName.Count == 0)
                             //|| (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) && MemberName[0] != "通信所" && _appMemberName[_appMemberName.Count - 1] != MemberName[0]))
                             {
                                 _begin = true;
@@ -553,6 +556,40 @@ namespace C_Excel
             }
         }
 
+        public void LoadWorkTime()
+        {
+            try
+            {
+                XmlDocument xmldoc = new XmlDocument();
+                xmldoc.Load(@"..\..\DataFile\WorkTime.xml");    //读取指定的XML文档
+                XmlNode NodeWorkTime = xmldoc.DocumentElement;  //读取xml的根节点
+
+                foreach (XmlNode node in NodeWorkTime.ChildNodes)//循环子节点
+                {
+                    switch (node.Name)
+                    {
+                        case "ShowUpTime":
+                            if (node.InnerText != "")
+                            {
+                                LimitShowUpTime = Convert.ToDateTime(node.InnerText);
+                            }
+
+                            break;
+
+                        case "dissmisTime":
+                            if (node.InnerText != "")
+                            {
+                                LimitDismissTime = Convert.ToDateTime(node.InnerText);
+                            }
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("" + ex, "错误");
+            }
+        }
         public bool isExMatch(string text, string patten, out List<string> Match)
         {
             bool _isMatch = false;
@@ -586,12 +623,12 @@ namespace C_Excel
         }
 
         //考勤情况
-        public void WorkingPassion(List<Member_Communications> MCs)
+        public void WorkingPassion(List<Member_Departement_Communications> MCs)
         {    
             
             string StatueOfEmployer = null;
 
-            foreach (Member_Communications mc in MCs)
+            foreach (Member_Departement_Communications mc in MCs)
             {
                 string EmployerName = mc.name;
                 List<WorkTime> _listWorkTime = new List<WorkTime>();
@@ -727,5 +764,15 @@ namespace C_Excel
             //return Regex.IsMatch(StrSource, @"^((20|21|22|23|[0-1]?\d):[0-5]?\d:[0-5]?\d)$");
         }
 
+        private void 设置ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            WfSetting wf = new WfSetting();
+            wf.Show();
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = LimitShowUpTime.ToString();
+        }
     }
 }

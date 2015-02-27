@@ -33,14 +33,15 @@
             this.monthCalendar1 = new System.Windows.Forms.MonthCalendar();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.Dayoff_list = new System.Windows.Forms.ListBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(24, 231);
+            this.button1.Location = new System.Drawing.Point(24, 213);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(75, 21);
             this.button1.TabIndex = 0;
             this.button1.Text = "放假";
             this.button1.UseVisualStyleBackColor = true;
@@ -48,9 +49,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(24, 260);
+            this.button2.Location = new System.Drawing.Point(24, 240);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(75, 21);
             this.button2.TabIndex = 1;
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;
@@ -58,7 +59,8 @@
             // monthCalendar1
             // 
             this.monthCalendar1.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.monthCalendar1.Location = new System.Drawing.Point(18, 18);
+            this.monthCalendar1.Location = new System.Drawing.Point(18, 17);
+            this.monthCalendar1.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.monthCalendar1.Name = "monthCalendar1";
             this.monthCalendar1.TabIndex = 3;
             this.monthCalendar1.TrailingForeColor = System.Drawing.SystemColors.Highlight;
@@ -67,33 +69,47 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(105, 231);
+            this.textBox1.Location = new System.Drawing.Point(105, 213);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.Size = new System.Drawing.Size(100, 21);
             this.textBox1.TabIndex = 4;
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(105, 263);
+            this.textBox2.Location = new System.Drawing.Point(105, 243);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
+            this.textBox2.Size = new System.Drawing.Size(100, 21);
             this.textBox2.TabIndex = 5;
             // 
-            // listBox1
+            // Dayoff_list
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(250, 18);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(120, 95);
-            this.listBox1.TabIndex = 6;
-            this.listBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listBox1_MouseClick);
+            this.Dayoff_list.AllowDrop = true;
+            this.Dayoff_list.FormattingEnabled = true;
+            this.Dayoff_list.ItemHeight = 12;
+            this.Dayoff_list.Location = new System.Drawing.Point(250, 37);
+            this.Dayoff_list.Name = "Dayoff_list";
+            this.Dayoff_list.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.Dayoff_list.Size = new System.Drawing.Size(154, 160);
+            this.Dayoff_list.TabIndex = 6;
+            this.Dayoff_list.Click += new System.EventHandler(this.Dayoff_list_Click);
+            this.Dayoff_list.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Dayoff_list_MouseClick);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(250, 17);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(65, 12);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "放假日期：";
             // 
             // Calender
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(437, 327);
-            this.Controls.Add(this.listBox1);
+            this.ClientSize = new System.Drawing.Size(437, 302);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.Dayoff_list);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.monthCalendar1);
@@ -113,6 +129,7 @@
         private System.Windows.Forms.MonthCalendar monthCalendar1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox Dayoff_list;
+        private System.Windows.Forms.Label label1;
     }
 }
