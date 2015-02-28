@@ -15,6 +15,8 @@ using System.Xml;
 using System.Text.RegularExpressions;
 using System.Data.Odbc;
 
+
+
 //using Excel.
 
 namespace C_Excel
@@ -61,6 +63,8 @@ namespace C_Excel
         #endregion
 
 
+
+
         public class WorkTime
         {
             private AMTime _amTime;
@@ -77,6 +81,10 @@ namespace C_Excel
                 set { this._pmTime = value; }
             }
 
+            public WorkTime()
+            {
+            }
+
             public WorkTime(PMTime PmTime)
             {
                 this.pmTime = pmTime;
@@ -89,7 +97,7 @@ namespace C_Excel
             public WorkTime(AMTime AmTime, PMTime PmTime)
             {
                 this.amTime = AmTime;
-                this.pmTime = pmTime;
+                this.pmTime = PmTime;
             }
         }
 
@@ -124,6 +132,9 @@ namespace C_Excel
             }
         }
 
+
+
+        FunctionsCS fcs = new FunctionsCS();
         public List<int> ListNotEmptyCol = new List<int>();
         public List<WorkTime> listWorkTime; //上班时间
         public static List<Member_Departement_Communications> MemberSchedules=new List<Member_Departement_Communications>();
@@ -151,6 +162,7 @@ namespace C_Excel
             InitializeComponent();
         }
 
+        #region but1
         private void button1_Click(object sender, EventArgs e)
         {
             string fileName = null;
@@ -204,8 +216,8 @@ namespace C_Excel
                 MessageBox.Show(dtResponse.Message, "错误:");
             }
         }
-        
-        
+        #endregion
+
         /// <summary>
         /// Read first sheet in Excel 2007+ File
         /// </summary>
@@ -284,21 +296,17 @@ namespace C_Excel
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
-        }
-
-        private void Form1_Load_1(object sender, EventArgs e)
-        {
-            splitContainer1.IsSplitterFixed=false;// 1.FixedPanel=FixedPanel.Panel1
+            splitContainer1.IsSplitterFixed = false;// 1.FixedPanel=FixedPanel.Panel1
             StartTimer();
             LoadWorkTime();
         }
 
+
+        #region Timer
         public void StartTimer()
         {
             this.timer1.Enabled = true;
-            this.timer1.Start();
-            
+            this.timer1.Start();            
         }
 
         //在界面底部显示现在时间,每秒刷新
@@ -309,8 +317,8 @@ namespace C_Excel
             toolStripStatusLabel1.Text = NowTime.ToString();
             this.Text = "通信所" + (Convert.ToInt32(NowTime.Month) - 1).ToString() + "月份考勤";
         }
+        #endregion
 
-      
         //当遇到名字或者 "11 一 "类似的格式时.
         private void button3_Click(object sender, EventArgs e)
         {
@@ -328,10 +336,11 @@ namespace C_Excel
 
                     List<string> st = new List<string>();
 
-
+                    Member_Departement_Communications memberSchedule;
                     List<Member_Departement_Communications> ListMemberSchedule = new List<Member_Departement_Communications>(); //全员列表
                     List<string> _checkedMemberName = new List<string>(); //已遍历过得员工的名字列表
                     List<string> MemberName = new List<string>();
+
 
                     int Nrow = 0; int Ncol = 0;
                     foreach (DataRow dr in DT.Rows)
@@ -341,25 +350,55 @@ namespace C_Excel
                         foreach (DataColumn dc in DT.Columns)
                         { 
                             Ncol++;
-                            List<string> inDate = new List<string>();
-                            if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out inDate))
+                            //单元格不为空时
+                            if (dr[dc].ToString() != "" && dr[dc].ToString() != null)
                             {
-                                DateTime currentDate = NowTime;
-                                int lastMoth = Convert.ToInt32(currentDate.Month)-1;
-                                int currentyear = Convert.ToInt32(currentDate.Year);
-                                //将数据转换为 年/月/日/星期 格式
-                                StringBuilder DateZh = new StringBuilder();
-                                DateZh.Append(currentyear.ToString() + "-" + lastMoth.ToString() + "-" + inDate[0] + "-星期" + inDate[1]);
+                                //当数据为2或3位汉字时
+                                if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) && MemberName[0] != "通信所")//|| _begin == true)// && MemberName[0] != "通信所" && _appMemberName.Count == 0)
+                                {
+                                    string memberName = "";
+                                    memberName = MemberName[0];
+                                    memberSchedule = new Member_Departement_Communications(memberName);
+                                    continue;
+                                }
 
-                                StringBuilder StartTime = new StringBuilder();
-                                StartTime.Append(currentyear.ToString() + "/" + lastMoth.ToString() + "/" + inDate[0]);
+                                //读取当单元格数据为 “数字（2位）汉字（一位）” 时读取下一行，同一排单元格的数据
+                                List<string> inDate = new List<string>();
+                                if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out inDate))
+                                {
+                                    DateTime currentDate = NowTime;
+                                    int lastMoth = Convert.ToInt32(currentDate.Month) - 1;
+                                    int currentyear = Convert.ToInt32(currentDate.Year);
+                                    //将数据转换为 年/月/日/星期 格式
+                                    StringBuilder DateZh = new StringBuilder();
+                                    DateZh.Append(currentyear.ToString() + "-" + lastMoth.ToString() + "-" + inDate[0] + "-星期" + inDate[1]);
 
-                                StringBuilder StopTime = new StringBuilder();
-                                StopTime.Append(currentyear.ToString() + "/" + lastMoth.ToString() + "/" + inDate[0]);
+                                    StringBuilder StartTime = new StringBuilder();
+                                    StartTime.Append(currentyear.ToString() + "/" + lastMoth.ToString() + "/" + inDate[0]);
 
-                                dr[dc] = DateZh;
-                                Convert.ToDateTime(StartTime.ToString());
-                                continue;
+                                    StringBuilder StopTime = new StringBuilder();
+                                    StopTime.Append(currentyear.ToString() + "/" + lastMoth.ToString() + "/" + inDate[0]);
+
+                                    dr[dc] = DateZh.ToString();
+                                    string strColName = dc.ColumnName.ToString();
+
+                                    DataRow seleRow = DT.Rows[Nrow];
+                                    string dataInCol = seleRow[dc].ToString();
+                                    //string str = dtc.[Nrow + 1];
+
+                                    if (dataInCol.Replace(" ", "") == "-" || dataInCol.Replace(" ", "") == "")
+                                    {
+                                        WorkTime wt = new WorkTime();
+                                    }
+                                    else
+                                    {
+                                        WorkTime wt = fcs.ConvertStringToDateTime(dataInCol);
+                                    }
+                                    //MessageBox.Show("" + DateZh.ToString() + "---" + strColName + "---" + dataInCol);
+                                    Convert.ToDateTime(StartTime.ToString());
+                                    //continue;
+                                    }
+                                //}
                             }
                         }
                     }
@@ -454,6 +493,7 @@ namespace C_Excel
                                     listWorkTime.Add(_workTime);
                                 }
                             }
+                            //时间格式为-xx:xx
                             else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
                             {
                                 //foreach (string str in MathGroup)
@@ -496,7 +536,7 @@ namespace C_Excel
                         }
                     }*/
                     #endregion
-                    dataGridView1.DataSource = DT;
+                    //dataGridView1.DataSource = DT;
 
                     //WorkingPassion(MemberSchedules);
                 }
@@ -519,7 +559,7 @@ namespace C_Excel
                 dataGridView1.DataSource = subDT;
                 //MessageBox.Show()
                 Update();*/
-                    
+
             }
             catch (Exception ex)
             {
@@ -569,6 +609,7 @@ namespace C_Excel
             }
         }
 
+        //处理xml
         public void LoadWorkTime()
         {
             try
@@ -636,6 +677,9 @@ namespace C_Excel
             xmldoc.AppendChild(xmlelem);
             xmldoc.Save(path);// @"..\..\DataFile\WorkTime.xml");
         }
+
+        /*
+        //判定正则表达式，返回值由正则表达式确定
         public bool isExMatch(string text, string patten, out List<string> Match)
         {
             bool _isMatch = false;
@@ -656,7 +700,9 @@ namespace C_Excel
             Match = _match;
             return _isMatch;
         }
+        */
 
+        //比较两个时间的早晚
         public bool CompareTime(DateTime time1, DateTime time2)
         {
             bool _isLater = false;
@@ -780,10 +826,10 @@ namespace C_Excel
             //textBox2.Text = Convert.ToDateTime(textBox1.Text.Replace(" ", "").Substring(0, 8)).ToShortTimeString().ToString();
             //textBox2.Text=
             //if (Regex.IsMatch(textBox1.Text.Replace(" ", "").Substring(0, 4), @"^((20|21|22|23|[0-1]?\d):[0-5]?\d)$"))
-            if (isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b)
+            if (fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b)
                 //|| isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d:[0-5]?\d)$", out b) 
-                || isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out b)
-                || isExMatch(textBox1.Text.Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b))
+                || fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out b)
+                || fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b))
             {
                 foreach (string c in b)
                 {
@@ -793,17 +839,17 @@ namespace C_Excel
                 CompareTime(Convert.ToDateTime(b[0]), Convert.ToDateTime(b[1]));
                 //textBox2.Text = "true    " + d;
             }
-            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out b))
+            else if (fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out b))
             {
                 textBox2.Text = "true    " + b[0];
 
             }
-            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out b))
+            else if (fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out b))
             {
                 textBox2.Text = "true    " + b[0];
             }
             //
-            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"(^[\u4e00-\u9fa5]{3})$", out b))
+            else if (fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out b))
             {
                 textBox2.Text = "true    " + b[0];
             }
@@ -814,6 +860,7 @@ namespace C_Excel
             //return Regex.IsMatch(StrSource, @"^((20|21|22|23|[0-1]?\d):[0-5]?\d:[0-5]?\d)$");
         }
 
+        //设置deadline时间。
         private void 设置ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             WfSetting wf = new WfSetting();
