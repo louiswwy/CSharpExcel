@@ -81,13 +81,13 @@ namespace C_Excel
                 MessageBox.Show(obj.ToString());
             }
         }
-
+        
         private void Dayoff_list_MouseClick(object sender, MouseEventArgs e)
         {
             int a = Dayoff_list.SelectedIndex;
             MessageBox.Show("2:" + ListDate[a] + "-" + a);
         }
-
+        /*
         private void Dayoff_list_DragLeave(object sender, EventArgs e)
         {
             int a = Dayoff_list.SelectedIndex;
@@ -98,5 +98,6 @@ namespace C_Excel
         {
            MessageBox.Show("1");
         }
+        */
     }
 }

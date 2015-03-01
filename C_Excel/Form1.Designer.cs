@@ -46,6 +46,7 @@
             this.button3 = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.外勤ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.statusStrip1.SuspendLayout();
@@ -60,7 +61,7 @@
             // button1
             // 
             this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(129, 249);
+            this.button1.Location = new System.Drawing.Point(184, 250);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 21);
             this.button1.TabIndex = 0;
@@ -163,15 +164,15 @@
             // 
             this.MemberList.FormattingEnabled = true;
             this.MemberList.ItemHeight = 12;
-            this.MemberList.Location = new System.Drawing.Point(129, 156);
+            this.MemberList.Location = new System.Drawing.Point(206, 156);
             this.MemberList.Name = "MemberList";
-            this.MemberList.Size = new System.Drawing.Size(120, 88);
+            this.MemberList.Size = new System.Drawing.Size(43, 88);
             this.MemberList.TabIndex = 8;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(126, 114);
+            this.label1.Location = new System.Drawing.Point(126, 107);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(41, 12);
             this.label1.TabIndex = 7;
@@ -179,9 +180,9 @@
             // 
             // B_Test
             // 
-            this.B_Test.Location = new System.Drawing.Point(129, 129);
+            this.B_Test.Location = new System.Drawing.Point(184, 129);
             this.B_Test.Name = "B_Test";
-            this.B_Test.Size = new System.Drawing.Size(130, 21);
+            this.B_Test.Size = new System.Drawing.Size(75, 21);
             this.B_Test.TabIndex = 6;
             this.B_Test.Text = "正则表达式功能测试";
             this.B_Test.UseVisualStyleBackColor = true;
@@ -189,15 +190,15 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(3, 153);
+            this.textBox2.Location = new System.Drawing.Point(3, 121);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(120, 118);
+            this.textBox2.Size = new System.Drawing.Size(175, 158);
             this.textBox2.TabIndex = 5;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(3, 129);
+            this.textBox1.Location = new System.Drawing.Point(173, 105);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 21);
             this.textBox1.TabIndex = 4;
@@ -217,6 +218,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.设置ToolStripMenuItem,
+            this.外勤ToolStripMenuItem,
             this.toolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -230,6 +232,13 @@
             this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.设置ToolStripMenuItem.Text = "设置";
             this.设置ToolStripMenuItem.Click += new System.EventHandler(this.设置ToolStripMenuItem_Click);
+            // 
+            // 外勤ToolStripMenuItem
+            // 
+            this.外勤ToolStripMenuItem.Name = "外勤ToolStripMenuItem";
+            this.外勤ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.外勤ToolStripMenuItem.Text = "外勤";
+            this.外勤ToolStripMenuItem.Click += new System.EventHandler(this.外勤ToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -295,6 +304,7 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 设置ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem 外勤ToolStripMenuItem;
     }
 }
 

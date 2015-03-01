@@ -33,29 +33,29 @@ namespace C_Excel
         #region 封装早晨和下午时间
         public class AMTime
         {
-            private DateTime _amTime;
-            public DateTime amTime
+            private TimeSpan _am_Time;
+            public TimeSpan _amTime
             {
-                get { return _amTime; }
-                set { _amTime = value; }
+                get { return _am_Time; }
+                set { _am_Time = value; }
             }
 
-            public AMTime(DateTime AmTime)
+            public AMTime(TimeSpan AmTime)
             {
-                this.amTime = AmTime;
+                this._amTime = AmTime;
             }
         }
 
         public class PMTime
         {
-            private DateTime _pmTime;
-            public DateTime pmTime
+            private TimeSpan _pmTime;
+            public TimeSpan pmTime
             {
                 get { return _pmTime; }
                 set { _pmTime = value; }
             }
 
-            public PMTime(DateTime PmTime)
+            public PMTime(TimeSpan PmTime)
             {
                 this.pmTime = PmTime;
             }
@@ -67,18 +67,18 @@ namespace C_Excel
 
         public class WorkTime
         {
-            private AMTime _amTime;
-            public AMTime amTime
+            private AMTime _time_am;
+            public AMTime _amTime
             {
-                get { return this._amTime; }
-                set { this._amTime = value; }
+                get { return this._time_am; }
+                set { this._time_am = value; }
             }
 
-            private PMTime _pmTime;
-            public PMTime pmTime
+            private PMTime _time_pm;
+            public PMTime _pmTime
             {
-                get { return this._pmTime; }
-                set { this._pmTime = value; }
+                get { return this._time_pm; }
+                set { this._time_pm = value; }
             }
 
             public WorkTime()
@@ -87,17 +87,17 @@ namespace C_Excel
 
             public WorkTime(PMTime PmTime)
             {
-                this.pmTime = pmTime;
+                this._pmTime = PmTime;
             }
             public WorkTime(AMTime AmTime)
             {
-                this.amTime = AmTime;
+                this._amTime = AmTime;
             }
 
             public WorkTime(AMTime AmTime, PMTime PmTime)
             {
-                this.amTime = AmTime;
-                this.pmTime = PmTime;
+                this._amTime = AmTime;
+                this._pmTime = PmTime;
             }
         }
 
@@ -135,9 +135,14 @@ namespace C_Excel
 
 
         FunctionsCS fcs = new FunctionsCS();
-        public List<int> ListNotEmptyCol = new List<int>();
+
         public List<WorkTime> listWorkTime; //上班时间
-        public static List<Member_Departement_Communications> MemberSchedules=new List<Member_Departement_Communications>();
+
+        /*
+        public List<int> ListNotEmptyCol = new List<int>();
+        */
+        public  List<Member_Departement_Communications> ListMemberSchedule;//=new List<Member_Departement_Communications>();
+        //ListMemberSchedule
         //本地电脑时间.
         public DateTime NowTime;
 
@@ -315,7 +320,7 @@ namespace C_Excel
             NowTime = DateTime.Now;
             lblMessage.Text = "欢迎!" + NowTime.ToString();
             toolStripStatusLabel1.Text = NowTime.ToString();
-            this.Text = "通信所" + (Convert.ToInt32(NowTime.Month) - 1).ToString() + "月份考勤";
+            this.Text = "通信所考勤记录";
         }
         #endregion
 
@@ -325,6 +330,12 @@ namespace C_Excel
             string FilePath = "";
             //文件路径
             FilePath = OpenFile();
+            Member_Departement_Communications memberSchedule;
+                ListMemberSchedule = new List<Member_Departement_Communications>(); //全员列表
+            List<string> _checkedMemberName = new List<string>(); //已遍历过得员工的名字列表
+            List<string> MemberName = new List<string>();
+            WorkTime wt;
+            listWorkTime = new List<WorkTime>();//员工每日出勤时间
 
             try
             {
@@ -336,11 +347,7 @@ namespace C_Excel
 
                     List<string> st = new List<string>();
 
-                    Member_Departement_Communications memberSchedule;
-                    List<Member_Departement_Communications> ListMemberSchedule = new List<Member_Departement_Communications>(); //全员列表
-                    List<string> _checkedMemberName = new List<string>(); //已遍历过得员工的名字列表
-                    List<string> MemberName = new List<string>();
-
+                    
 
                     int Nrow = 0; int Ncol = 0;
                     foreach (DataRow dr in DT.Rows)
@@ -348,19 +355,43 @@ namespace C_Excel
                         Nrow++;
                         Ncol = 0;
                         foreach (DataColumn dc in DT.Columns)
-                        { 
+                        {
                             Ncol++;
+
                             //单元格不为空时
                             if (dr[dc].ToString() != "" && dr[dc].ToString() != null)
                             {
+                                //xxxx-xx-xx-xxxx-xx-xx
+                                if(fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(\d{4}-[0,1]?\d-[0,3]?\d)--(\d{4}-[0,1]?\d-[0,3]?\d)$", out MemberName))
+                                {
+                                    string a = MemberName[0];
+                                    string b = MemberName[1];
+
+                                    this.Text = "通信所" + a + "至" + b + "考勤记录";
+                                }
                                 //当数据为2或3位汉字时
-                                if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) && MemberName[0] != "通信所")//|| _begin == true)// && MemberName[0] != "通信所" && _appMemberName.Count == 0)
+                                if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) && MemberName[0] != "通信所"&& MemberName[0] != "赵煜")//|| _begin == true)// && MemberName[0] != "通信所" && _appMemberName.Count == 0)
                                 {
                                     string memberName = "";
                                     memberName = MemberName[0];
-                                    memberSchedule = new Member_Departement_Communications(memberName);
+                                    //尚未遍历,列表为空
+                                    if (_checkedMemberName.Count == 0)
+                                    {
+                                        _checkedMemberName.Add(memberName);//记录员工名称 
+                                    }
+                                    else if (_checkedMemberName.Count != 0 && _checkedMemberName[_checkedMemberName.Count - 1] != memberName && !_checkedMemberName.Contains(memberName)) //或者发现列表中尚未出现的员工名称时
+                                    {
+                                        memberSchedule = new Member_Departement_Communications(_checkedMemberName[_checkedMemberName.Count - 1], listWorkTime);
+
+                                        ListMemberSchedule.Add(memberSchedule);
+
+                                        _checkedMemberName.Add(memberName);//记录员工名称 
+                                        listWorkTime = new List<WorkTime>();
+                                    }
+
                                     continue;
                                 }
+                                //ListMemberSchedule;
 
                                 //读取当单元格数据为 “数字（2位）汉字（一位）” 时读取下一行，同一排单元格的数据
                                 List<string> inDate = new List<string>();
@@ -369,197 +400,189 @@ namespace C_Excel
                                     DateTime currentDate = NowTime;
                                     int lastMoth = Convert.ToInt32(currentDate.Month) - 1;
                                     int currentyear = Convert.ToInt32(currentDate.Year);
+                                    /*
                                     //将数据转换为 年/月/日/星期 格式
                                     StringBuilder DateZh = new StringBuilder();
                                     DateZh.Append(currentyear.ToString() + "-" + lastMoth.ToString() + "-" + inDate[0] + "-星期" + inDate[1]);
 
                                     StringBuilder StartTime = new StringBuilder();
-                                    StartTime.Append(currentyear.ToString() + "/" + lastMoth.ToString() + "/" + inDate[0]);
+                                    StartTime.Append(currentyear.ToString() + "," + lastMoth.ToString() + "," + inDate[0]);
 
                                     StringBuilder StopTime = new StringBuilder();
-                                    StopTime.Append(currentyear.ToString() + "/" + lastMoth.ToString() + "/" + inDate[0]);
-
+                                    StopTime.Append(currentyear.ToString() + "," + lastMoth.ToString() + "," + inDate[0]);
+                                    
                                     dr[dc] = DateZh.ToString();
-                                    string strColName = dc.ColumnName.ToString();
+                                    */
 
+                                    string strColName = dc.ColumnName.ToString();
+                                    
                                     DataRow seleRow = DT.Rows[Nrow];
                                     string dataInCol = seleRow[dc].ToString();
                                     //string str = dtc.[Nrow + 1];
-
+                                    
                                     if (dataInCol.Replace(" ", "") == "-" || dataInCol.Replace(" ", "") == "")
                                     {
-                                        WorkTime wt = new WorkTime();
+                                        AMTime _errorA = new AMTime(Convert.ToDateTime("0:00:00").TimeOfDay);
+                                        PMTime _errorP = new PMTime(Convert.ToDateTime("0:00:00").TimeOfDay);
+                                        wt = new WorkTime();
                                     }
                                     else
                                     {
-                                        WorkTime wt = fcs.ConvertStringToDateTime(dataInCol);
+                                        wt = fcs.ConvertStringToDateTime(dataInCol);
                                     }
+
+                                    listWorkTime.Add(wt);
                                     //MessageBox.Show("" + DateZh.ToString() + "---" + strColName + "---" + dataInCol);
-                                    Convert.ToDateTime(StartTime.ToString());
+                                    //Convert.ToDateTime(StartTime.ToString());
                                     //continue;
-                                    }
-                                //}
+                                }
                             }
                         }
-                    }
 
-                    #region 111
-                    /*foreach (DataRow dr in DT.Rows)
-                    {
-                        Nrow++;
-                        Ncol = 0;
-                        foreach (DataColumn dc in DT.Columns)
+                        #region 111
+                        /*foreach (DataRow dr in DT.Rows)
                         {
-                            Ncol++;
-                            List<string> MathGroup = new List<string>();
-                            string a = dr[dc].ToString().Replace(" ", "");
+                            Nrow++;
+                            Ncol = 0;
+                            foreach (DataColumn dc in DT.Columns)
+                            {
+                                Ncol++;
+                                List<string> MathGroup = new List<string>();
+                                string a = dr[dc].ToString().Replace(" ", "");
 
-                            if (dr[dc].ToString() == "" || dr[dc].ToString() == null)
-                            {
-                                continue;
-                            }
-                            bool _begin = false;
-                            //尚未便利过任何员工时 和 检测到的员工名称与列表中的最后一个不同
-                            if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) || _begin == true)// && MemberName[0] != "通信所" && _appMemberName.Count == 0)
-                            //|| (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) && MemberName[0] != "通信所" && _appMemberName[_appMemberName.Count - 1] != MemberName[0]))
-                            {
-                                _begin = true;
-                                if (MemberName.Count != 0 && MemberName[0] != "通信所")// &&  (_appMemberName.Count == 0||_appMemberName[_appMemberName.Count - 1] != MemberName[0]))
+                                if (dr[dc].ToString() == "" || dr[dc].ToString() == null)
                                 {
-                                    //MessageBox.Show("" + MemberName[0] + "__" + Nrow.ToString() + "__" + Ncol.ToString());
-
-                                    if (_checkedMemberName.Count == 0)//|| _checkedMemberName[_checkedMemberName.Count - 1].name != MemberName[0])
+                                    continue;
+                                }
+                                bool _begin = false;
+                                //尚未便利过任何员工时 和 检测到的员工名称与列表中的最后一个不同
+                                if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) || _begin == true)// && MemberName[0] != "通信所" && _appMemberName.Count == 0)
+                                //|| (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) && MemberName[0] != "通信所" && _appMemberName[_appMemberName.Count - 1] != MemberName[0]))
+                                {
+                                    _begin = true;
+                                    if (MemberName.Count != 0 && MemberName[0] != "通信所")// &&  (_appMemberName.Count == 0||_appMemberName[_appMemberName.Count - 1] != MemberName[0]))
                                     {
-                                        listWorkTime = new List<WorkTime>();
-                                        _checkedMemberName.Add(MemberName[0]);
-                                        Member_Communications _memberSchedule = new Member_Communications(MemberName[0]);
-                                        MemberSchedules.Add(_memberSchedule);
-                                        continue;
-                                    }
-                                    else if (MemberSchedules.Count != 0 && MemberSchedules[MemberSchedules.Count - 1].name.ToString() != MemberName[0])
-                                    {
-                                        //_checkedMemberName[_checkedMemberName.Count - 1].workTime=lis
-                                        Member_Communications _memberSchedule = new Member_Communications(MemberName[0]);
-                                        MemberSchedules[MemberSchedules.Count - 1].workTime = listWorkTime;
-                                        MemberSchedules.Add(_memberSchedule);
-                                        //listWorkTime.Clear();
-                                        listWorkTime = new List<WorkTime>();
-                                        continue;
-                                    }
-                                }
-                            }
-                            //实例化MemberSchedule;
+                                        //MessageBox.Show("" + MemberName[0] + "__" + Nrow.ToString() + "__" + Ncol.ToString());
 
-                            
-                            #region usefull
-                            
-                            //当时间格式为xx:xx-yy:yy时
-                            if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
-                                    //|| isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out MathGroup)
-                                    //|| isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out MathGroup)
-                                    //|| isExMatch(dr[dc].ToString().Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
-                                   
-                            {
-                                //foreach (string str in MathGroup)
-                                {
-                                    AMTime _amt1 = new AMTime(Convert.ToDateTime(Convert.ToDateTime(MathGroup[0]).ToShortTimeString()));
-                                    PMTime _pmt1 = new PMTime(Convert.ToDateTime(Convert.ToDateTime(MathGroup[1]).ToShortTimeString()));
-                                    WorkTime _workTime = new WorkTime(_amt1, _pmt1);
-                                    listWorkTime.Add(_workTime);
+                                        if (_checkedMemberName.Count == 0)//|| _checkedMemberName[_checkedMemberName.Count - 1].name != MemberName[0])
+                                        {
+                                            listWorkTime = new List<WorkTime>();
+                                            _checkedMemberName.Add(MemberName[0]);
+                                            Member_Communications _memberSchedule = new Member_Communications(MemberName[0]);
+                                            MemberSchedules.Add(_memberSchedule);
+                                            continue;
+                                        }
+                                        else if (MemberSchedules.Count != 0 && MemberSchedules[MemberSchedules.Count - 1].name.ToString() != MemberName[0])
+                                        {
+                                            //_checkedMemberName[_checkedMemberName.Count - 1].workTime=lis
+                                            Member_Communications _memberSchedule = new Member_Communications(MemberName[0]);
+                                            MemberSchedules[MemberSchedules.Count - 1].workTime = listWorkTime;
+                                            MemberSchedules.Add(_memberSchedule);
+                                            //listWorkTime.Clear();
+                                            listWorkTime = new List<WorkTime>();
+                                            continue;
+                                        }
+                                    }
                                 }
-                            }
-                                
-                                //时间格式为xx:xx:xx时 //^[\u4e00-\u9fa5]{3}
-                            else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d[\u4e00-\u9fa5]{0,4}$", out MathGroup))                                    
-                            {
-                                //foreach (string str in MathGroup) 
+                                //实例化MemberSchedule;
+
+
+                                #region usefull
+
+                                //当时间格式为xx:xx-yy:yy时
+                                if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
+                                        //|| isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out MathGroup)
+                                        //|| isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out MathGroup)
+                                        //|| isExMatch(dr[dc].ToString().Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
+
                                 {
-                                    MessageBox.Show("1:" + MathGroup[0]);
-                                    dr[dc] = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
-                                    AMTime _amt1 = new AMTime(Convert.ToDateTime(Convert.ToDateTime(MathGroup[0]).ToShortTimeString()));
-                                    WorkTime _workTime = new WorkTime(_amt1);
-                                    listWorkTime.Add(_workTime);
+                                    //foreach (string str in MathGroup)
+                                    {
+                                        AMTime _amt1 = new AMTime(Convert.ToDateTime(Convert.ToDateTime(MathGroup[0]).ToShortTimeString()));
+                                        PMTime _pmt1 = new PMTime(Convert.ToDateTime(Convert.ToDateTime(MathGroup[1]).ToShortTimeString()));
+                                        WorkTime _workTime = new WorkTime(_amt1, _pmt1);
+                                        listWorkTime.Add(_workTime);
+                                    }
                                 }
-                            }
-                                
-                                //时间格式为xx:xx-
-                            else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out MathGroup))
-                            {
-                                //foreach (string str in MathGroup)
+
+                                    //时间格式为xx:xx:xx时 //^[\u4e00-\u9fa5]{3}
+                                else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d[\u4e00-\u9fa5]{0,4}$", out MathGroup))                                    
                                 {
-                                    dr[dc] = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
-                                    AMTime _amt1 = new AMTime(Convert.ToDateTime(Convert.ToDateTime(MathGroup[0]).ToShortTimeString()));
-                                    WorkTime _workTime = new WorkTime(_amt1);
-                                    listWorkTime.Add(_workTime);
+                                    //foreach (string str in MathGroup) 
+                                    {
+                                        MessageBox.Show("1:" + MathGroup[0]);
+                                        dr[dc] = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
+                                        AMTime _amt1 = new AMTime(Convert.ToDateTime(Convert.ToDateTime(MathGroup[0]).ToShortTimeString()));
+                                        WorkTime _workTime = new WorkTime(_amt1);
+                                        listWorkTime.Add(_workTime);
+                                    }
                                 }
-                            }
-                            //时间格式为-xx:xx
-                            else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
-                            {
-                                //foreach (string str in MathGroup)
+
+                                    //时间格式为xx:xx-
+                                else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out MathGroup))
                                 {
-                                    dr[dc] = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
-                                    PMTime _pmt1 = new PMTime(Convert.ToDateTime(Convert.ToDateTime(MathGroup[0]).ToShortTimeString()));
-                                    WorkTime _workTime = new WorkTime(_pmt1);
-                                    listWorkTime.Add(_workTime);
+                                    //foreach (string str in MathGroup)
+                                    {
+                                        dr[dc] = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
+                                        AMTime _amt1 = new AMTime(Convert.ToDateTime(Convert.ToDateTime(MathGroup[0]).ToShortTimeString()));
+                                        WorkTime _workTime = new WorkTime(_amt1);
+                                        listWorkTime.Add(_workTime);
+                                    }
                                 }
-                            }
-                            
-                            else if (isExMatch(textBox1.Text.Replace(" ", ""), @"^([0-3]\d)一|二|三|四|五|六|日$", out MathGroup))
-                                    //else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out MathGroup))
-                            {
-                                dr[dc] = "星期" + MathGroup[1];
-                            }
-                            else if (dr[dc].ToString().Replace(" ", "") == "")
-                            {
-                                dr[dc] = dr[dc];
-                            }
-                            else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^[0].\d*$", out MathGroup))
-                            {
-                                MessageBox.Show("单元格样式需要修改!", "注意", MessageBoxButtons.OK);
-                                break;
-                                //dr[dc] = "-+-" +Convert.ToDateTime(Convert.ToDateTime(dr[dc])).ToString() + "--error--" "-+-";
-                            }
-                                    //u4E00-\u9FA5 与上级重复
-                                    //else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{3})$", out MathGroup))
-                                    //{
-                                    //    dr[dc] = dr[dc] + "-" + MathGroup[0];
-                                    //}                                
-                            else
-                            {
-                                continue;
-                            }
-                            #endregion
+                                //时间格式为-xx:xx
+                                else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
+                                {
+                                    //foreach (string str in MathGroup)
+                                    {
+                                        dr[dc] = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
+                                        PMTime _pmt1 = new PMTime(Convert.ToDateTime(Convert.ToDateTime(MathGroup[0]).ToShortTimeString()));
+                                        WorkTime _workTime = new WorkTime(_pmt1);
+                                        listWorkTime.Add(_workTime);
+                                    }
+                                }
+
+                                else if (isExMatch(textBox1.Text.Replace(" ", ""), @"^([0-3]\d)一|二|三|四|五|六|日$", out MathGroup))
+                                        //else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out MathGroup))
+                                {
+                                    dr[dc] = "星期" + MathGroup[1];
+                                }
+                                else if (dr[dc].ToString().Replace(" ", "") == "")
+                                {
+                                    dr[dc] = dr[dc];
+                                }
+                                else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"^[0].\d*$", out MathGroup))
+                                {
+                                    MessageBox.Show("单元格样式需要修改!", "注意", MessageBoxButtons.OK);
+                                    break;
+                                    //dr[dc] = "-+-" +Convert.ToDateTime(Convert.ToDateTime(dr[dc])).ToString() + "--error--" "-+-";
+                                }
+                                        //u4E00-\u9FA5 与上级重复
+                                        //else if (isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{3})$", out MathGroup))
+                                        //{
+                                        //    dr[dc] = dr[dc] + "-" + MathGroup[0];
+                                        //}                                
+                                else
+                                {
+                                    continue;
+                                }
+                                #endregion
+                                    //}
                                 //}
-                            //}
 
-                        }
-                    }*/
-                    #endregion
-                    //dataGridView1.DataSource = DT;
+                            }
+                        }*/
+                        #endregion
 
-                    //WorkingPassion(MemberSchedules);
+                        dataGridView1.DataSource = DT;
+
+                        //
+                    }
+                    memberSchedule = new Member_Departement_Communications(_checkedMemberName[_checkedMemberName.Count - 1], listWorkTime);
+                    ListMemberSchedule.Add(memberSchedule);
+                    WorkingPassion(ListMemberSchedule);
+
+
                 }
-
-
-
-                /*for (int a = 0; a < 8; a++)
-                {
-                    //subDT.Columns.Add(DT.Columns[a]);
-                }
-
-                DataColumn DIndex = DT.Columns.Add("ID", typeof(int));
-                DIndex.AutoIncrement = true;
-                DIndex.AutoIncrementSeed = -1;
-                DIndex.AutoIncrementStep = -1;
-                DIndex.ReadOnly = true;
-
-                
-                //if(DT.ta)
-                dataGridView1.DataSource = subDT;
-                //MessageBox.Show()
-                Update();*/
-
             }
             catch (Exception ex)
             {
@@ -609,7 +632,7 @@ namespace C_Excel
             }
         }
 
-        //处理xml
+        #region 处理xml
         public void LoadWorkTime()
         {
             try
@@ -662,6 +685,7 @@ namespace C_Excel
             }
         }
 
+        //创建WorkTime.xml文件
         public void CreateXml(string path)
         {
             XmlDocument xmldoc = new XmlDocument();
@@ -677,6 +701,33 @@ namespace C_Excel
             xmldoc.AppendChild(xmlelem);
             xmldoc.Save(path);// @"..\..\DataFile\WorkTime.xml");
         }
+
+        public void XmlMemberList()
+        {
+            try
+            {
+                XmlDocument xmldoc = new XmlDocument();
+                try
+                {
+                    xmldoc.Load(@"..\..\DataFile\ListMemberName.xml");    //读取指定的XML文档                    
+                }
+                catch (Exception)
+                {
+                    CreateXml(@"..\..\DataFile\ListMemberName.xml");//如果程序没有找到xml文件，则新建一个
+                }
+                XmlNode NodeWorkTime = xmldoc.DocumentElement;  //读取xml的根节点
+
+                foreach (XmlNode node in NodeWorkTime.ChildNodes)//循环子节点
+                {
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("" + ex, "错误");
+            }
+        }
+        #endregion
 
         /*
         //判定正则表达式，返回值由正则表达式确定
@@ -702,12 +753,12 @@ namespace C_Excel
         }
         */
 
-        //比较两个时间的早晚
-        public bool CompareTime(DateTime time1, DateTime time2)
+        //比较两个时间的早晚, 测试时间比时限大时返回true
+        public bool CompareTime(TimeSpan time1, TimeSpan TimeLimit)
         {
             bool _isLater = false;
             //time1比time2晚时
-            if(DateTime.Compare(time1,time2)>=0)
+            if (time1 >= TimeLimit)
             {
                 _isLater = true;
             }
@@ -731,9 +782,15 @@ namespace C_Excel
                 int _question = 0;
                 foreach (WorkTime wt in _listWorkTime)
                 {
-                    if (wt.amTime != null && wt.pmTime != null)
+                    if (wt._amTime != null && wt._pmTime != null)
                     {
-                        if (CompareTime(Convert.ToDateTime(wt.amTime.ToString()), this.SetLimShowUpTime))
+                        //将数据转换为timeSpan格式
+                        
+
+                        DateTime _timeLim = this.SetLimShowUpTime;
+                        TimeSpan ts = _timeLim.TimeOfDay;
+
+                        if (CompareTime(wt._amTime._amTime, ts))
                         {
                             _late++;
                         }
@@ -742,16 +799,18 @@ namespace C_Excel
                             _inTime++;
                         }
                     }
-                    else if (wt.amTime == null)
+                    else if (wt._amTime == null)
                     {
                         _question++;
                     }
-                    else if (wt.pmTime == null)
+                    else if (wt._pmTime == null)
                     {
                         _noSignOff++;
                     }
                 }
-                string _statueOfEmployer = EmployerName + "\n \t准时到达:" + _inTime + "次.\n \t迟到:" + _late + "次. \n \t无早上数据:" + _question + "次. \n \t无下午数据:" + _noSignOff + "次";
+                string _statueOfEmployer = EmployerName + System.Environment.NewLine + "\t准时到达:"
+                    + _inTime + "次." + System.Environment.NewLine + " \t迟到:" + _late + "次." + System.Environment.NewLine + " \t无早上数据:"
+                    + _question + "次. " + System.Environment.NewLine + "\t无下午数据:" + _noSignOff + "次. " + System.Environment.NewLine + System.Environment.NewLine;
                 StatueOfEmployer = StatueOfEmployer + _statueOfEmployer;
             }
             textBox2.Text = StatueOfEmployer;
@@ -836,7 +895,7 @@ namespace C_Excel
                     d = d + c + "+++";
                 }
 
-                CompareTime(Convert.ToDateTime(b[0]), Convert.ToDateTime(b[1]));
+                //CompareTime(Convert.ToDateTime(b[0]), Convert.ToDateTime(b[1]));
                 //textBox2.Text = "true    " + d;
             }
             else if (fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out b))
@@ -874,6 +933,14 @@ namespace C_Excel
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
             textBox1.Text = this.SetLimShowUpTime.ToString();
+        }
+
+        private void 外勤ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Member_QingJia MQJ = new Member_QingJia();
+            MQJ.Owner = this;
+            MQJ.ShowDialog(this);
+            MQJ.Close();
         }
     }
 }
