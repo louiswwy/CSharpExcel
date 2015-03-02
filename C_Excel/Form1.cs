@@ -62,11 +62,21 @@ namespace C_Excel
         }
         #endregion
 
-
-
+        private List<string> _laDuree;
+        public List<string> LaDuree
+        {
+            get{ return this._laDuree; }
+            set { this._laDuree = value; }
+        }
 
         public class WorkTime
         {
+            private List<string> _stringDate;
+            public List<string> _Date
+            {
+                get { return this._stringDate; }
+                set { this._stringDate = value; }
+            }
             private AMTime _time_am;
             public AMTime _amTime
             {
@@ -85,17 +95,20 @@ namespace C_Excel
             {
             }
 
-            public WorkTime(PMTime PmTime)
+            public WorkTime(List<string> StringDate, PMTime PmTime)
             {
+                this._Date = StringDate;
                 this._pmTime = PmTime;
             }
-            public WorkTime(AMTime AmTime)
+            public WorkTime(List<string> StringDate, AMTime AmTime)
             {
+                this._Date = StringDate;
                 this._amTime = AmTime;
             }
 
-            public WorkTime(AMTime AmTime, PMTime PmTime)
+            public WorkTime(List<string> StringDate, AMTime AmTime, PMTime PmTime)
             {
+                this._Date = StringDate;
                 this._amTime = AmTime;
                 this._pmTime = PmTime;
             }
@@ -301,6 +314,8 @@ namespace C_Excel
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            LaDuree = new List<string>();
+            this.Text = "通信所考勤记录";
             splitContainer1.IsSplitterFixed = false;// 1.FixedPanel=FixedPanel.Panel1
             StartTimer();
             LoadWorkTime();
@@ -320,7 +335,7 @@ namespace C_Excel
             NowTime = DateTime.Now;
             lblMessage.Text = "欢迎!" + NowTime.ToString();
             toolStripStatusLabel1.Text = NowTime.ToString();
-            this.Text = "通信所考勤记录";
+            //this.Text = "通信所考勤记录";
         }
         #endregion
 
@@ -360,12 +375,23 @@ namespace C_Excel
                             if (dr[dc].ToString() != "" && dr[dc].ToString() != null)
                             {
                                 //xxxx-xx-xx-xxxx-xx-xx
-                                if(fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(\d{4}-[0,1]?\d-[0,3]?\d)--(\d{4}-[0,1]?\d-[0,3]?\d)$", out MemberName))
+                                if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(\d{4}-([0,1]?\d)-([0,3]?\d))--(\d{4}-([0,1]?\d)-([0,3]?\d))$", out MemberName))
                                 {
-                                    string a = MemberName[0];
-                                    string b = MemberName[1];
+                                    
+                                    string start = MemberName[0];
+                                    string end = MemberName[3];
 
-                                    this.Text = "通信所" + a + "至" + b + "考勤记录";
+                                    string startM = MemberName[1];
+                                    string StartD = MemberName[2];
+
+                                    string endM = MemberName[4];
+                                    string endD = MemberName[5];
+                                    foreach (string _str in MemberName)
+                                    {
+                                        LaDuree.Add(_str);
+                                    }
+
+                                    this.Text = "通信所" + start + "至" + end + "考勤记录";
                                 }
                                 //当数据为2或3位汉字时
                                 if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) && MemberName[0] != "通信所"&& MemberName[0] != "赵煜")//|| _begin == true)// && MemberName[0] != "通信所" && _appMemberName.Count == 0)
@@ -426,7 +452,7 @@ namespace C_Excel
                                     }
                                     else
                                     {
-                                        wt = fcs.ConvertStringToDateTime(dataInCol);
+                                        wt = fcs.ConvertStringToDateTime(dataInCol, inDate);
                                     }
 
                                     listWorkTime.Add(wt);
@@ -571,12 +597,16 @@ namespace C_Excel
                         }*/
                         #endregion
 
-                        dataGridView1.DataSource = DT;
-
-                        //
+                        
                     }
+                   
+                    dataGridView1.DataSource = DT;
+                    //加入表中最后一个成员的信息
                     memberSchedule = new Member_Departement_Communications(_checkedMemberName[_checkedMemberName.Count - 1], listWorkTime);
                     ListMemberSchedule.Add(memberSchedule);
+                    Member_QingJia cal = new Member_QingJia();
+                    cal.ShowDialog(this);
+                    cal.Close();
                     WorkingPassion(ListMemberSchedule);
 
 

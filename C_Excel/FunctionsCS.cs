@@ -15,7 +15,7 @@ namespace C_Excel
         }
 
 
-        public Form1.WorkTime ConvertStringToDateTime(string str)
+        public Form1.WorkTime ConvertStringToDateTime(string strTime, List<string> strDate)
         {
             //Form1.WorkTime dateTime;// = new Form1.WorkTime();
             List<string> MathGroup = new List<string>();
@@ -23,50 +23,50 @@ namespace C_Excel
             Form1.PMTime PmTime;
 
             //当时间格式为xx:xx-yy:yy时
-            if (isExMatch(str.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
+            if (isExMatch(strTime.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
             {
                 AmTime = new Form1.AMTime(Convert.ToDateTime(MathGroup[0]).TimeOfDay);
                 PmTime = new Form1.PMTime(Convert.ToDateTime(MathGroup[1]).TimeOfDay);
-                dateTime = new Form1.WorkTime(AmTime, PmTime);//(AmTime, PmTime);
+                dateTime = new Form1.WorkTime(strDate, AmTime, PmTime);//(AmTime, PmTime);
 
             }
 
             //时间格式为xx:xx:xx时，只提取前4位数字
-            else if (isExMatch(str.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out MathGroup))
+            else if (isExMatch(strTime.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out MathGroup))
             {
 
                 //string temp = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
                 AmTime = new Form1.AMTime(Convert.ToDateTime(MathGroup[0]).TimeOfDay);//.ToShortTimeString()));
-                dateTime = new Form1.WorkTime(AmTime);
+                dateTime = new Form1.WorkTime(strDate, AmTime);
                 //listWorkTime.Add(_workTime);
 
             }
 
             //时间格式为xx:xx:xx 汉字（0-4位）时 //^[\u4e00-\u9fa5]{3}
-            else if (isExMatch(str.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d[\u4e00-\u9fa5]{0,4}$", out MathGroup))
+            else if (isExMatch(strTime.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d[\u4e00-\u9fa5]{0,4}$", out MathGroup))
             {
                 //string temp = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
                 AmTime = new Form1.AMTime(Convert.ToDateTime(MathGroup[0]).TimeOfDay);//.ToShortTimeString()));
-                dateTime = new Form1.WorkTime(AmTime);
+                dateTime = new Form1.WorkTime(strDate, AmTime);
                 //listWorkTime.Add(_workTime);
 
             }
 
             //时间格式为xx:xx-
-            else if (isExMatch(str.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out MathGroup))
+            else if (isExMatch(strTime.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out MathGroup))
             {
                 //dr[dc] = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
                 AmTime = new Form1.AMTime(Convert.ToDateTime(MathGroup[0]).TimeOfDay);//.ToShortTimeString()));
-                dateTime = new Form1.WorkTime(AmTime);
+                dateTime = new Form1.WorkTime(strDate, AmTime);
                 //listWorkTime.Add(_workTime);
 
             }
             //时间格式为-xx:xx
-            else if (isExMatch(str.Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
+            else if (isExMatch(strTime.Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
             {
                 //dr[dc] = Convert.ToDateTime(MathGroup[0]).ToShortTimeString().ToString();
                 PmTime = new Form1.PMTime((Convert.ToDateTime(MathGroup[0])).TimeOfDay);//.ToShortTimeString()));
-                dateTime = new Form1.WorkTime(PmTime);
+                dateTime = new Form1.WorkTime(strDate, PmTime);
                 //listWorkTime.Add(_workTime);
 
             }

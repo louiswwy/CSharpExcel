@@ -39,40 +39,40 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 24);
+            this.label1.Location = new System.Drawing.Point(10, 26);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 12);
+            this.label1.Size = new System.Drawing.Size(91, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "最晚打卡时间：";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 72);
+            this.label2.Location = new System.Drawing.Point(10, 78);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 12);
+            this.label2.Size = new System.Drawing.Size(91, 13);
             this.label2.TabIndex = 1;
             this.label2.Text = "最早下班时间：";
             // 
             // T_ShowUp
             // 
-            this.T_ShowUp.Location = new System.Drawing.Point(105, 21);
+            this.T_ShowUp.Location = new System.Drawing.Point(105, 23);
             this.T_ShowUp.Name = "T_ShowUp";
-            this.T_ShowUp.Size = new System.Drawing.Size(100, 21);
+            this.T_ShowUp.Size = new System.Drawing.Size(100, 20);
             this.T_ShowUp.TabIndex = 2;
             // 
             // T_Dissmis
             // 
-            this.T_Dissmis.Location = new System.Drawing.Point(105, 69);
+            this.T_Dissmis.Location = new System.Drawing.Point(105, 75);
             this.T_Dissmis.Name = "T_Dissmis";
-            this.T_Dissmis.Size = new System.Drawing.Size(100, 21);
+            this.T_Dissmis.Size = new System.Drawing.Size(100, 20);
             this.T_Dissmis.TabIndex = 3;
             // 
             // B_Valide
             // 
-            this.B_Valide.Location = new System.Drawing.Point(24, 113);
+            this.B_Valide.Location = new System.Drawing.Point(24, 122);
             this.B_Valide.Name = "B_Valide";
-            this.B_Valide.Size = new System.Drawing.Size(75, 23);
+            this.B_Valide.Size = new System.Drawing.Size(75, 25);
             this.B_Valide.TabIndex = 4;
             this.B_Valide.Text = "应用";
             this.B_Valide.UseVisualStyleBackColor = true;
@@ -80,9 +80,9 @@
             // 
             // B_Cancel
             // 
-            this.B_Cancel.Location = new System.Drawing.Point(130, 113);
+            this.B_Cancel.Location = new System.Drawing.Point(130, 122);
             this.B_Cancel.Name = "B_Cancel";
-            this.B_Cancel.Size = new System.Drawing.Size(75, 23);
+            this.B_Cancel.Size = new System.Drawing.Size(75, 25);
             this.B_Cancel.TabIndex = 5;
             this.B_Cancel.Text = "退出";
             this.B_Cancel.UseVisualStyleBackColor = true;
@@ -90,9 +90,9 @@
             // 
             // WfSetting
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(229, 154);
+            this.ClientSize = new System.Drawing.Size(229, 167);
             this.Controls.Add(this.B_Cancel);
             this.Controls.Add(this.B_Valide);
             this.Controls.Add(this.T_Dissmis);
@@ -100,7 +100,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "WfSetting";
-            this.Text = "设置";
+            this.Text = "时间变更";
             this.Load += new System.EventHandler(this.WfSetting_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

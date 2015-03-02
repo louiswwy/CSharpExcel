@@ -98,16 +98,19 @@ namespace C_Excel
                                 //传递值回form1
                                 ((Form1)this.Owner).SetLimShowUpTime = Convert.ToDateTime(T_ShowUp.Text.ToString());
                                 ((Form1)this.Owner).SetLimDissmisTime = Convert.ToDateTime(T_Dissmis.Text.ToString());
-                                MessageBox.Show("已保存", "通知");
+                                MessageBox.Show("以储存下列变更:" + System.Environment.NewLine + "上班时间为:  0"
+                                    + T_ShowUp.Text.ToString() + ";" + System.Environment.NewLine + "下班时间为  " 
+                                    + T_Dissmis.Text.ToString() + ";", "通知", MessageBoxButtons.OK
+                                    , MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
                             }
                             else
                             {
-                                MessageBox.Show("数据未改变", "通知");
+                                MessageBox.Show("数据未改变", "通知", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                         }
                         else
                         {
-                            MessageBox.Show("数据格式不正确", "通知");
+                            MessageBox.Show("数据格式不正确", "通知",MessageBoxButtons.OK,MessageBoxIcon.Warning,MessageBoxDefaultButton.Button1);
                         }
                     }
                 }
