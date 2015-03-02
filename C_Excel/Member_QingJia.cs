@@ -38,8 +38,10 @@ namespace C_Excel
             if (((Form1)this.Owner).LaDuree.Count != 0)
             {
                 List<string> a = ((Form1)this.Owner).LaDuree;
-                string _str = a[0] + " - " + a[3];
-                
+                string _str = a[0] + " -- " + a[3];
+
+                Font textFont = new Font("Arial", 10, FontStyle.Regular, GraphicsUnit.Point);
+                SizeF _size = TextSize(_str, textFont);
 
                 // Settings to generate a New Label
                 Label lbl = new Label();   // Create the Variable for Label
@@ -47,12 +49,13 @@ namespace C_Excel
                 lbl.Text = _str;
 
                 // Create Variables to Define "X" and "Y" Locations
-                var lblLocX = lbl.Location.X;
-                var lblLoxY = lbl.Location.Y;
+                //var lblLocX = lbl.Location.X;
+                //var lblLoxY = lbl.Location.Y;
 
+                lbl.SetBounds((this.Size.Width - Convert.ToInt32(_size.Width)) / 2, 0, Convert.ToInt32(_size.Width), Convert.ToInt32(_size.Height));
                 //Set your Label Location Here
-                lblLocX = (this.Size.Width-150)/2;
-                lblLoxY = 77;
+                //lblLocX = 500;
+                //lblLoxY = 77;
 
                 this.Controls.Add(lbl);
                 //label8.Location = 
@@ -64,7 +67,7 @@ namespace C_Excel
                     ListOfMemberName.Add(item.name);
                     comboxMember.Items.Add(item.name);
                 }
-                
+
                 //MessageBox.Show(a);
             }
             else
@@ -80,5 +83,49 @@ namespace C_Excel
             List<Form1.WorkTime> _lWorkTime = ((Form1)this.Owner).ListMemberSchedule[comboxMember.SelectedIndex].workTime;
             MessageBox.Show(_name);
         }
-    }
+
+
+
+        private static SizeF TextSize(string text, Font txtFnt)
+        {
+            SizeF txtSize = new SizeF();
+            // The size returned is 'Size(int width, int height)' where width and height
+            // are the dimensions of the string in pixels
+            Size s = System.Windows.Forms.TextRenderer.MeasureText(text, txtFnt);
+            // Value based on normal DPI settings of 96
+            txtSize.Width = (float)Math.Ceiling((float)s.Width / 96f * 100f);
+            txtSize.Height = (float)Math.Ceiling((float)s.Height / 96f * 100f);
+            return txtSize;
+        }
+
+        private void Member_QingJia_Resize(object sender, EventArgs e)
+        {
+
+            /*
+            if (((Form1)this.Owner).LaDuree.Count != 0)
+            {
+                List<string> a = ((Form1)this.Owner).LaDuree;
+                string _str = a[0] + " -- " + a[3];
+
+                Font textFont = new Font("Arial", 10, FontStyle.Regular, GraphicsUnit.Point);
+                SizeF _size = TextSize(_str, textFont);
+
+                // Settings to generate a New Label
+                Label lbl = new Label();   // Create the Variable for Label
+                lbl.Name = "MyNewLabelID"; // Identify your new Label
+                lbl.Text = _str;
+
+                // Create Variables to Define "X" and "Y" Locations
+                var lblLocX = lbl.Location.X;
+                var lblLoxY = lbl.Location.Y;
+
+                lbl.SetBounds((this.Size.Width - Convert.ToInt32(_size.Width)) / 2, 0, Convert.ToInt32(_size.Width), Convert.ToInt32(_size.Height));
+                //Set your Label Location Here
+                lblLocX = 500;
+                lblLoxY = 77;
+
+                this.Controls.Add(lbl);
+            }*/
+        }
+    } 
 }
