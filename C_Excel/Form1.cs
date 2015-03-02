@@ -345,9 +345,7 @@ namespace C_Excel
 
                     DataTable DT = DS.Tables[0];
 
-                    List<string> st = new List<string>();
-
-                    
+                    List<string> st = new List<string>();                  
 
                     int Nrow = 0; int Ncol = 0;
                     foreach (DataRow dr in DT.Rows)
