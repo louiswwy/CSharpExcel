@@ -12,26 +12,6 @@ namespace C_Excel
 {
     public partial class Member_QingJia : Form
     {
-        public Member_QingJia()
-        {
-            InitializeComponent();
-            foreach (Control c in this.panel1.Controls)
-            {
-                if (c is Button)
-                {
-                    c.MouseClick += c_MouseClick;
-                }
-            }
-        }
-
-        void c_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                ((Control)sender).BackColor=Color.Lavender;
-            }
-        }
-
         List<string> ListOfMemberName = new List<string>();
         public class Member_ChuQing
         {
@@ -44,6 +24,40 @@ namespace C_Excel
 
             //private 
         }
+
+        public List<Control> listComponant = new List<Control>();
+        int _dayInWeek = 0;
+        public Member_QingJia()
+        {
+            InitializeComponent();
+            foreach (Control c in this.panel1.Controls)
+            {
+                if (_dayInWeek == 6)
+                {
+                    _dayInWeek = 0;
+                }
+                _dayInWeek++;
+                if (c is Button)
+                {
+                    c.MouseClick += c_MouseClick;
+                    listComponant.Add(c);
+                }
+            }
+        }
+
+        void c_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (_ShiJia == true)
+                { ((Control)sender).BackColor = Color.Teal; }
+                if (_ChuChai == true)
+                { ((Control)sender).BackColor = Color.Olive; }
+                if (_Vacance == true)
+                { ((Control)sender).BackColor = Color.DarkOrange; }
+            }
+        }
+
 
         /*************/
         bool _ChuChai = false;
