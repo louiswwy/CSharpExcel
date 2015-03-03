@@ -375,17 +375,19 @@ namespace C_Excel
                             if (dr[dc].ToString() != "" && dr[dc].ToString() != null)
                             {
                                 //xxxx-xx-xx-xxxx-xx-xx
-                                if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(\d{4}-([0,1]?\d)-([0,3]?\d))--(\d{4}-([0,1]?\d)-([0,3]?\d))$", out MemberName))
+                                if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^((\d{4})-([0,1]?\d)-([0,3]?\d))--(\d{4}-([0,1]?\d)-([0,3]?\d))$", out MemberName))
                                 {
                                     
                                     string start = MemberName[0];
-                                    string end = MemberName[3];
+                                    string end = MemberName[4];
 
-                                    string startM = MemberName[1];
-                                    string StartD = MemberName[2];
+                                    string startY = MemberName[1];
+                                    string startM = MemberName[2];
+                                    string StartD = MemberName[3];
 
-                                    string endM = MemberName[4];
-                                    string endD = MemberName[5];
+                                    string endY = MemberName[4];
+                                    string endM = MemberName[5];
+                                    string endD = MemberName[6];
                                     foreach (string _str in MemberName)
                                     {
                                         LaDuree.Add(_str);

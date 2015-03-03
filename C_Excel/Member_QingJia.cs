@@ -15,10 +15,41 @@ namespace C_Excel
         public Member_QingJia()
         {
             InitializeComponent();
+            foreach (Control c in this.panel1.Controls)
+            {
+                if (c is Button)
+                {
+                    c.MouseClick += c_MouseClick;
+                }
+            }
+        }
+
+        void c_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ((Control)sender).BackColor=Color.Lavender;
+            }
         }
 
         List<string> ListOfMemberName = new List<string>();
+        public class Member_ChuQing
+        {
+            private string _day;
+            public string workerName
+            {
+                get { return _day; }
+                set { this._day = value; }
+            }
 
+            //private 
+        }
+
+        /*************/
+        bool _ChuChai = false;
+        bool _ShiJia = false;
+        bool _Vacance = false;
+        /*************/
 
 
 
@@ -38,30 +69,12 @@ namespace C_Excel
             if (((Form1)this.Owner).LaDuree.Count != 0)
             {
                 List<string> a = ((Form1)this.Owner).LaDuree;
-                string _str = a[0] + " -- " + a[3];
+                string _str = a[0] + " -- " + a[4];
 
-                Font textFont = new Font("Arial", 10, FontStyle.Regular, GraphicsUnit.Point);
-                SizeF _size = TextSize(_str, textFont);
+                DisplayTime(_str);
+                fileTheCalendar(a);
 
-                // Settings to generate a New Label
-                Label lbl = new Label();   // Create the Variable for Label
-                lbl.Name = "MyNewLabelID"; // Identify your new Label
-                lbl.Text = _str;
-
-                // Create Variables to Define "X" and "Y" Locations
-                //var lblLocX = lbl.Location.X;
-                //var lblLoxY = lbl.Location.Y;
-
-                lbl.SetBounds((this.Size.Width - Convert.ToInt32(_size.Width)) / 2, 0, Convert.ToInt32(_size.Width), Convert.ToInt32(_size.Height));
-                //Set your Label Location Here
-                //lblLocX = 500;
-                //lblLoxY = 77;
-
-                this.Controls.Add(lbl);
-                //label8.Location = 
-                //label8.Location = new Point(delete.Location.Y, 40);//设置纵坐标y 
-
-
+                groupBox1.Text = a[2] + "月月历";
                 foreach (Form1.Member_Departement_Communications item in ((Form1)this.Owner).ListMemberSchedule)
                 {
                     ListOfMemberName.Add(item.name);
@@ -75,6 +88,7 @@ namespace C_Excel
                 MessageBox.Show("需要先倒入Excel文件.", "注意", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
                 this.Close();
             }
+            
         }
 
         private void comboxMember_SelectionChangeCommitted(object sender, EventArgs e)
@@ -84,7 +98,17 @@ namespace C_Excel
             MessageBox.Show(_name);
         }
 
+        private void Member_QingJia_Resize(object sender, EventArgs e)
+        {
 
+            if (((Form1)this.Owner).LaDuree.Count != 0)
+            {
+                List<string> a = ((Form1)this.Owner).LaDuree;
+                string _str = a[0] + " -- " + a[3];
+                DisplayTime(_str);
+
+            }
+        }
 
         private static SizeF TextSize(string text, Font txtFnt)
         {
@@ -98,34 +122,152 @@ namespace C_Excel
             return txtSize;
         }
 
-        private void Member_QingJia_Resize(object sender, EventArgs e)
+        public void DisplayTime(string str)
+        {
+            label8.Text = str;
+            Font textFont = new Font("Arial", 10, FontStyle.Regular, GraphicsUnit.Point);
+            SizeF _size = TextSize(str, textFont);
+
+            Point newP = new Point(Convert.ToInt32(this.Size.Width - _size.Width) / 2, 9);
+            label8.Location = newP;
+            groupBox2.Location = new Point(Convert.ToInt32(this.Size.Width - groupBox2.Width) / 2, 25);
+            B_Valide.Location = new Point(this.Width / 2 - 101, 384);
+            B_Cancel.Location = new Point(this.Width / 2 + 44, 384);
+        }
+
+        DateTime[] listDT;
+
+        public void fileTheCalendar(List<string> textMoi)
+        {
+            //长方形75,25 
+            //间距 6
+            int Year = Convert.ToInt32( textMoi[1].ToString());
+            int Month =Convert.ToInt32( textMoi[2].ToString());
+            int DayS = Convert.ToInt32( textMoi[3].ToString());
+            int DayE = Convert.ToInt32( textMoi[6].ToString());
+            string[,] tableMonth;
+
+            listDT = new DateTime[DayE - DayS + 1];
+
+            for (int DayInMonth = 0; DayInMonth < DayE; DayInMonth++)
+            {
+                DateTime dt = new DateTime(Year, Month, DayInMonth+1);
+
+                listDT[DayInMonth] = dt;
+
+                
+            }
+
+            int num = 0;
+            int colNum = 0;
+
+
+        }
+
+        private void B_ChuChai_Click(object sender, EventArgs e)
+        {
+            
+
+            if (B_ChuChai.FlatStyle != FlatStyle.Flat)
+            {
+                _ChuChai = true;
+                B_ChuChai.FlatStyle = FlatStyle.Flat; //been selected
+                B_ChuChai.BackColor = Color.Olive;
+
+                //如果 事假 按钮被选中,那么恢复事假按钮为未选中,并改变_ShiJia的值
+                if (B_ShiJia.FlatStyle == FlatStyle.Flat)
+                {
+                    B_ShiJia.FlatStyle = FlatStyle.Standard;
+                    B_ShiJia.BackColor = Color.Aqua;
+                    _ShiJia = false;
+                }
+                if (B_Vacance.FlatStyle == FlatStyle.Flat)
+                {
+                    B_Vacance.FlatStyle = FlatStyle.Standard;
+                    B_Vacance.BackColor = Color.Orange;
+                    _Vacance = false;
+                }
+            }
+            else
+            {
+                B_ChuChai.FlatStyle = FlatStyle.Standard;
+                B_ChuChai.BackColor = Color.Yellow;
+                _ChuChai = false;
+            }
+        }
+
+        private void B_ShiJia_Click(object sender, EventArgs e)
+        {
+            
+
+            if (B_ShiJia.FlatStyle != FlatStyle.Flat)
+            {
+                _ShiJia = true;
+                B_ShiJia.FlatStyle = FlatStyle.Flat;//been selected
+                B_ShiJia.BackColor = Color.Teal;
+                //如果 出差 按钮被选中,那么恢复事假按钮为未选中,并改变_ShiJia的值
+                if (B_ShiJia.FlatStyle == FlatStyle.Flat)
+                {
+                    B_ChuChai.FlatStyle = FlatStyle.Standard;
+                    B_ChuChai.BackColor = Color.Yellow;
+                    _ChuChai = false;
+                }
+                if (B_Vacance.FlatStyle == FlatStyle.Flat)
+                {
+                    B_Vacance.FlatStyle = FlatStyle.Standard;
+                    B_Vacance.BackColor = Color.Orange;
+                    _Vacance = false;
+                }
+            }
+            else
+            {
+                B_ShiJia.FlatStyle = FlatStyle.Standard;
+                B_ShiJia.BackColor = Color.Aqua;
+                _ShiJia = false;
+            }
+        }
+
+        private void B_Vacance_Click(object sender, EventArgs e)
+        {
+            if (B_Vacance.FlatStyle != FlatStyle.Flat)
+            {
+                _Vacance = true;
+                B_Vacance.FlatStyle = FlatStyle.Flat;//been selected
+                B_Vacance.BackColor = Color.DarkOrange;
+                //如果 出差 按钮被选中,那么恢复事假按钮为未选中,并改变_ShiJia的值
+                if (B_ChuChai.FlatStyle == FlatStyle.Flat)
+                {
+                    B_ChuChai.FlatStyle = FlatStyle.Standard;
+                    B_ChuChai.BackColor = Color.Yellow;
+                    _ChuChai = false;
+                }
+                if (B_ShiJia.FlatStyle == FlatStyle.Flat)
+                {
+                    B_ShiJia.FlatStyle = FlatStyle.Standard;
+                    B_ShiJia.BackColor = Color.Aqua;
+                    _ShiJia = false;
+                }
+            }
+            else
+            {
+                B_Vacance.FlatStyle = FlatStyle.Standard;
+                B_Vacance.BackColor = Color.Orange;
+                _Vacance = false;
+            }
+        }
+
+        private void Member_QingJia_Click(object sender, EventArgs e)
         {
 
-            /*
-            if (((Form1)this.Owner).LaDuree.Count != 0)
-            {
-                List<string> a = ((Form1)this.Owner).LaDuree;
-                string _str = a[0] + " -- " + a[3];
-
-                Font textFont = new Font("Arial", 10, FontStyle.Regular, GraphicsUnit.Point);
-                SizeF _size = TextSize(_str, textFont);
-
-                // Settings to generate a New Label
-                Label lbl = new Label();   // Create the Variable for Label
-                lbl.Name = "MyNewLabelID"; // Identify your new Label
-                lbl.Text = _str;
-
-                // Create Variables to Define "X" and "Y" Locations
-                var lblLocX = lbl.Location.X;
-                var lblLoxY = lbl.Location.Y;
-
-                lbl.SetBounds((this.Size.Width - Convert.ToInt32(_size.Width)) / 2, 0, Convert.ToInt32(_size.Width), Convert.ToInt32(_size.Height));
-                //Set your Label Location Here
-                lblLocX = 500;
-                lblLoxY = 77;
-
-                this.Controls.Add(lbl);
-            }*/
         }
+
+        private void panel1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+
+
     } 
 }
