@@ -334,7 +334,7 @@ namespace C_Excel
         {
             NowTime = DateTime.Now;
             lblMessage.Text = "欢迎!" + NowTime.ToString();
-            toolStripStatusLabel1.Text = NowTime.ToString();
+            toolStripStatusLabel1.Text = "";
             //this.Text = "通信所考勤记录";
         }
         #endregion
@@ -354,13 +354,13 @@ namespace C_Excel
 
             try
             {
-                if (FilePath != "")
+                if (FilePath != "" && FilePath != null)
                 {
                     DataSet DS = LoadDataFromExcel(FilePath);
 
                     DataTable DT = DS.Tables[0];
 
-                    List<string> st = new List<string>();                  
+                    List<string> st = new List<string>();
 
                     int Nrow = 0; int Ncol = 0;
                     foreach (DataRow dr in DT.Rows)
@@ -377,7 +377,7 @@ namespace C_Excel
                                 //xxxx-xx-xx-xxxx-xx-xx
                                 if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^((\d{4})-([0,1]?\d)-([0,3]?\d))--(\d{4}-([0,1]?\d)-([0,3]?\d))$", out MemberName))
                                 {
-                                    
+
                                     string start = MemberName[0];
                                     string end = MemberName[4];
 
@@ -396,7 +396,7 @@ namespace C_Excel
                                     this.Text = "通信所" + start + "至" + end + "考勤记录";
                                 }
                                 //当数据为2或3位汉字时
-                                if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) && MemberName[0] != "通信所"&& MemberName[0] != "赵煜")//|| _begin == true)// && MemberName[0] != "通信所" && _appMemberName.Count == 0)
+                                if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) && MemberName[0] != "通信所" && MemberName[0] != "赵煜")//|| _begin == true)// && MemberName[0] != "通信所" && _appMemberName.Count == 0)
                                 {
                                     string memberName = "";
                                     memberName = MemberName[0];
@@ -441,11 +441,11 @@ namespace C_Excel
                                     */
 
                                     string strColName = dc.ColumnName.ToString();
-                                    
+
                                     DataRow seleRow = DT.Rows[Nrow];
                                     string dataInCol = seleRow[dc].ToString();
                                     //string str = dtc.[Nrow + 1];
-                                    
+
                                     if (dataInCol.Replace(" ", "") == "-" || dataInCol.Replace(" ", "") == "")
                                     {
                                         AMTime _errorA = new AMTime(Convert.ToDateTime("0:00:00").TimeOfDay);
@@ -599,9 +599,9 @@ namespace C_Excel
                         }*/
                         #endregion
 
-                        
+
                     }
-                   
+
                     dataGridView1.DataSource = DT;
                     //加入表中最后一个成员的信息
                     memberSchedule = new Member_Departement_Communications(_checkedMemberName[_checkedMemberName.Count - 1], listWorkTime);
@@ -609,7 +609,7 @@ namespace C_Excel
                     Member_QingJia cal = new Member_QingJia();
                     cal.ShowDialog(this);
                     cal.Close();
-                    WorkingPassion(ListMemberSchedule);
+                    //WorkingPassion(ListMemberSchedule);
 
 
                 }
@@ -815,7 +815,7 @@ namespace C_Excel
                     if (wt._amTime != null && wt._pmTime != null)
                     {
                         //将数据转换为timeSpan格式
-                        
+
 
                         DateTime _timeLim = this.SetLimShowUpTime;
                         TimeSpan ts = _timeLim.TimeOfDay;
@@ -971,6 +971,15 @@ namespace C_Excel
             MQJ.Owner = this;
             MQJ.ShowDialog(this);
             MQJ.Close();
+        }
+
+        private void 退出ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult messageboxResult = MessageBox.Show("确认退出?", "注意", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+            if (messageboxResult == DialogResult.Yes)
+            {
+                this.Close();
+            }
         }
     }
 }

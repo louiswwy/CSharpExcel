@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ListOfMemberName>
   <member name="">
-    <year>
-      <month>
-        <day>
-          
-        </day>
-      </month>
-    </year>
+    <Date TypeOfReason=""></Date>    
   </member>
 </ListOfMemberName>

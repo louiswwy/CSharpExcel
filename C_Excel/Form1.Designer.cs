@@ -49,6 +49,7 @@
             this.外勤ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.退出ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -61,9 +62,9 @@
             // button1
             // 
             this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(184, 250);
+            this.button1.Location = new System.Drawing.Point(184, 271);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 21);
+            this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
             this.button1.Text = "选择文件";
             this.button1.UseVisualStyleBackColor = true;
@@ -73,10 +74,9 @@
             // _boxList
             // 
             this._boxList.FormattingEnabled = true;
-            this._boxList.ItemHeight = 12;
-            this._boxList.Location = new System.Drawing.Point(-2, 27);
+            this._boxList.Location = new System.Drawing.Point(-2, 29);
             this._boxList.Name = "_boxList";
-            this._boxList.Size = new System.Drawing.Size(120, 88);
+            this._boxList.Size = new System.Drawing.Size(120, 95);
             this._boxList.TabIndex = 1;
             // 
             // statusStrip1
@@ -84,7 +84,7 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblMessage,
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 286);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 312);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(636, 26);
             this.statusStrip1.TabIndex = 3;
@@ -136,15 +136,15 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dataGridView1);
-            this.splitContainer1.Size = new System.Drawing.Size(636, 286);
+            this.splitContainer1.Size = new System.Drawing.Size(636, 312);
             this.splitContainer1.SplitterDistance = 266;
             this.splitContainer1.TabIndex = 4;
             // 
             // B_Calendar
             // 
-            this.B_Calendar.Location = new System.Drawing.Point(129, 83);
+            this.B_Calendar.Location = new System.Drawing.Point(129, 90);
             this.B_Calendar.Name = "B_Calendar";
-            this.B_Calendar.Size = new System.Drawing.Size(75, 21);
+            this.B_Calendar.Size = new System.Drawing.Size(75, 23);
             this.B_Calendar.TabIndex = 10;
             this.B_Calendar.Text = "月历";
             this.B_Calendar.UseVisualStyleBackColor = true;
@@ -152,9 +152,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(129, 56);
+            this.button2.Location = new System.Drawing.Point(129, 61);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 21);
+            this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 9;
             this.button2.Text = "DataReader";
             this.button2.UseVisualStyleBackColor = true;
@@ -163,26 +163,25 @@
             // MemberList
             // 
             this.MemberList.FormattingEnabled = true;
-            this.MemberList.ItemHeight = 12;
-            this.MemberList.Location = new System.Drawing.Point(206, 156);
+            this.MemberList.Location = new System.Drawing.Point(206, 169);
             this.MemberList.Name = "MemberList";
-            this.MemberList.Size = new System.Drawing.Size(43, 88);
+            this.MemberList.Size = new System.Drawing.Size(43, 95);
             this.MemberList.TabIndex = 8;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(126, 107);
+            this.label1.Location = new System.Drawing.Point(126, 116);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 12);
+            this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 7;
             this.label1.Text = "label1";
             // 
             // B_Test
             // 
-            this.B_Test.Location = new System.Drawing.Point(184, 129);
+            this.B_Test.Location = new System.Drawing.Point(184, 140);
             this.B_Test.Name = "B_Test";
-            this.B_Test.Size = new System.Drawing.Size(75, 21);
+            this.B_Test.Size = new System.Drawing.Size(75, 23);
             this.B_Test.TabIndex = 6;
             this.B_Test.Text = "正则表达式功能测试";
             this.B_Test.UseVisualStyleBackColor = true;
@@ -190,25 +189,25 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(3, 121);
+            this.textBox2.Location = new System.Drawing.Point(3, 131);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(175, 158);
+            this.textBox2.Size = new System.Drawing.Size(175, 171);
             this.textBox2.TabIndex = 5;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(173, 105);
+            this.textBox1.Location = new System.Drawing.Point(173, 114);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 21);
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 4;
             this.textBox1.Text = "19:20-17:30";
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(129, 29);
+            this.button3.Location = new System.Drawing.Point(129, 31);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 21);
+            this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 3;
             this.button3.Text = "选择文件";
             this.button3.UseVisualStyleBackColor = true;
@@ -219,7 +218,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.设置ToolStripMenuItem,
             this.外勤ToolStripMenuItem,
-            this.toolStripMenuItem1});
+            this.toolStripMenuItem1,
+            this.退出ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(262, 25);
@@ -254,14 +254,21 @@
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(362, 282);
+            this.dataGridView1.Size = new System.Drawing.Size(362, 308);
             this.dataGridView1.TabIndex = 0;
+            // 
+            // 退出ToolStripMenuItem
+            // 
+            this.退出ToolStripMenuItem.Name = "退出ToolStripMenuItem";
+            this.退出ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.退出ToolStripMenuItem.Text = "退出";
+            this.退出ToolStripMenuItem.Click += new System.EventHandler(this.退出ToolStripMenuItem_Click);
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(636, 312);
+            this.ClientSize = new System.Drawing.Size(636, 338);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -305,6 +312,7 @@
         private System.Windows.Forms.ToolStripMenuItem 设置ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem 外勤ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 退出ToolStripMenuItem;
     }
 }
 
