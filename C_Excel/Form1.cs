@@ -467,6 +467,7 @@ namespace C_Excel
                             if (dr[dc].ToString() != "" && dr[dc].ToString() != null)
                             {
                                 //xxxx-xx-xx-xxxx-xx-xx
+                                //记录文件所记录月份.
                                 if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^((\d{4})-([0,1]?\d)-([0,3]?\d))--(\d{4}-([0,1]?\d)-([0,3]?\d))$", out MemberName))
                                 {
 
@@ -540,8 +541,6 @@ namespace C_Excel
 
                                     if (dataInCol.Replace(" ", "") == "-" || dataInCol.Replace(" ", "") == "")
                                     {
-                                        AMTime _errorA = new AMTime(Convert.ToDateTime("0:00:00").TimeOfDay);
-                                        PMTime _errorP = new PMTime(Convert.ToDateTime("0:00:00").TimeOfDay);
                                         wt = new WorkTime(inDate);
                                     }
                                     else
@@ -690,7 +689,6 @@ namespace C_Excel
                             }
                         }*/
                         #endregion
-
 
                     }
 

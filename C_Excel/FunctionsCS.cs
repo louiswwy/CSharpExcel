@@ -70,6 +70,12 @@ namespace C_Excel
                 //listWorkTime.Add(_workTime);
 
             }
+            else
+            {
+                string aaa = strTime;
+                AmTime = new Form1.AMTime(Convert.ToDateTime(strTime).TimeOfDay);//.ToShortTimeString()));
+                dateTime = new Form1.WorkTime(strDate, AmTime);
+            }
 
 
             return dateTime;

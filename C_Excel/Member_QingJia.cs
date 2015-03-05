@@ -63,13 +63,13 @@ namespace C_Excel
 
         }
 
-        public class MemberChuQingState
+        public class MemberChuQingStatistics
         {
             private string name;
-            private int isLate;
-            private int onTime;
-            private int inQuestion;
-            private int notSignOff;
+            private int isLate = 0;
+            private int onTime = 0;
+            private int inQuestion = 0;
+            private int notSignOff = 0;
             private int badData;
             public string workerName
             {
@@ -103,7 +103,7 @@ namespace C_Excel
                 get { return badData; }
                 set { badData = value; }
             }
-            public MemberChuQingState(string WorkerName,int WorkerLate,int WorkerOnTime,int DateQuestion,int WorkerDidntSignOff,int numBadData)
+            public MemberChuQingStatistics(string WorkerName,int WorkerLate,int WorkerOnTime,int DateQuestion,int WorkerDidntSignOff,int numBadData)
             {
                 this.name = WorkerName;
                 this.workerIsLate = WorkerLate;
@@ -123,7 +123,11 @@ namespace C_Excel
 
         public List<Control> listComponant = new List<Control>();
         public List<string> listPassedMember = new List<string>(); //以遍历成员名称
-        public List<MemberChuQingState> MemberChuQingList = new List<MemberChuQingState>();
+        public List<MemberChuQingStatistics> MemberChuQingList = new List<MemberChuQingStatistics>();
+
+        Form1 fom = new Form1();
+        DateTime LimitMorningTime;  // = fom.SetLimShowUpTime;
+        DateTime AfternoonTime; // = fom.SetLimDissmisTime;
 
         List<Member_Leave> Member_NotShowUp = new List<Member_Leave>();
         int _dayInWeek = 0;
@@ -140,7 +144,7 @@ namespace C_Excel
             if (listPassedMember.Count() == ((Form1)this.Owner).ListMemberSchedule.Count())
             {
                 //LoadMemberLeaveList();
-                WorkingPassion(((Form1)this.Owner).ListMemberSchedule);
+                //WorkingPassion(((Form1)this.Owner).ListMemberSchedule);
             }
             else
             {
@@ -169,11 +173,16 @@ namespace C_Excel
             toolStripProgressBar1.Maximum = b;
             toolStripProgressBar1.Style = ProgressBarStyle.Blocks;
 
+            toolStripStatusLabel1.Text = "";
             toolState.Text = "";
             toolinfor.Text = "";
             toolTimer.Text = "";
-            toolStripStatusLabel4.Text = "";
-            toolStripStatusLabel5.Text = "";
+
+            分割线1.Text = "";
+            分割线2.Text = "";
+            分割线3.Text = "";
+            分割线4.Text = "";
+
             this.timer1.Enabled = true;
             timer1.Start();
             if (((Form1)this.Owner).LaDuree.Count != 0)
@@ -207,82 +216,102 @@ namespace C_Excel
         private void comboxMember_SelectionChangeCommitted(object sender, EventArgs e)
         {
 
-            if (!listPassedMember.Contains(this.comboxMember.SelectedItem.ToString()) || listPassedMember.Count == 0)
+            //if (/*!listPassedMember.Contains(this.comboxMember.SelectedItem.ToString()) ||*/ listPassedMember.Count == 0)
+            //{
+            _startProcecs = true;
+            //刷新按钮颜色.
+            fileTheCalendar();
+            _ChuChai = false;
+            _ShiJia = false;
+            _Vacance = false;
+            B_ChuChai.FlatStyle = FlatStyle.Standard;
+            B_ShiJia.FlatStyle = FlatStyle.Standard;
+            B_Vacance.FlatStyle = FlatStyle.Standard;
+
+            B_ChuChai.BackColor = Color.Yellow;
+            B_ShiJia.BackColor = Color.Aqua;
+            B_Vacance.BackColor = Color.Orange;
+
+            string _name = ((Form1)this.Owner).ListMemberSchedule[comboxMember.SelectedIndex].name;
+
+            if (!listPassedMember.Contains(_name))
             {
-                _startProcecs = true;
-                //刷新按钮颜色.
-                fileTheCalendar();
-                _ChuChai = false;
-                _ShiJia = false;
-                _Vacance = false;
-                B_ChuChai.FlatStyle = FlatStyle.Standard;
-                B_ShiJia.FlatStyle = FlatStyle.Standard;
-                B_Vacance.FlatStyle = FlatStyle.Standard;
-
-                B_ChuChai.BackColor = Color.Yellow;
-                B_ShiJia.BackColor = Color.Aqua;
-                B_Vacance.BackColor = Color.Orange;
-
-                string _name = ((Form1)this.Owner).ListMemberSchedule[comboxMember.SelectedIndex].name;
                 listPassedMember.Add(_name);
-                List<Form1.WorkTime> _lWorkTime = ((Form1)this.Owner).ListMemberSchedule[comboxMember.SelectedIndex].workTime;
-                //MessageBox.Show(_name);
-                if (_startProcecs!=true)
-                {
-                toolinfor.Text = "可以通过点击上方按钮来为每个员工定义出差或休假日期.";
+            }
 
-                }
-                toolState.Text = "选中:" + _name;
-                if (_name != "")
+            List<Form1.WorkTime> _lWorkTime = ((Form1)this.Owner).ListMemberSchedule[comboxMember.SelectedIndex].workTime;
+
+
+            toolinfor.Text = "可以通过点击上方按钮来为每个员工定义出差或休假日期.";
+
+            toolStripStatusLabel1.Text = "以设置:" + listPassedMember.Count + "/" + ((Form1)this.Owner).ListMemberSchedule.Count + "成员";
+            toolState.Text = "选中:" + _name;
+            if (_name != "")
+            {
+                List<Form1.WorkTime> LFWT = ((Form1)this.Owner).ListMemberSchedule[comboxMember.SelectedIndex].workTime;
+
+                //定义
+                MemberChuQingStatistics memberState;
+                int _inTime = 0;    //准时
+                int _noSignOff = 0; //没有打卡下班
+                int _late = 0;  //迟到
+                int _question = 0;  //数据有问题
+                int _noData = 0;    //没有数据
+
+                foreach (Control c in this.panel1.Controls)
                 {
-                    List<Form1.WorkTime> LFWT = ((Form1)this.Owner).ListMemberSchedule[comboxMember.SelectedIndex].workTime;
-                    foreach (Control c in this.panel1.Controls)
+
+                    if (c is Button)
                     {
-
-                        if (c is Button)
+                        if (listComponant.Contains(c))//当按钮表示所需月份日期时
                         {
-                            if (listComponant.Contains(c))//当按钮表示所需月份日期时
+                            c.Enabled = true;
+                            //c.BackColor = Color.Control;
+
+                            #region 将按钮文字改为日期和考勤时间 并同时改变按钮颜色 同时记录次数
+
+                            foreach (Form1.WorkTime FWT in LFWT)
                             {
-                                c.Enabled = true;
-                                //c.BackColor = Color.Control;
-                                #region 将按钮文字改为日期和考勤时间 并同时改变按钮颜色
-                                foreach (Form1.WorkTime FWT in LFWT)
+                                bool enretard = false;
+                                bool alheure = false;
+                                bool parPresente = false;
+                                if (FWT._Date.Count != 0)
                                 {
-                                    bool enretard = false;
-                                    bool alheure = false;
-                                    bool parPresente = false;
-                                    if (FWT._Date.Count != 0)
+                                    List<string> text = FWT._Date;
+                                    if (c.Text != "" && c.Text != null)
                                     {
-                                        List<string> text = FWT._Date;
-                                        if (c.Text != "" && c.Text != null)
+                                        string[] yearMonthDay = c.Text.Split(new[] { " " }, StringSplitOptions.None); //将按钮名字分为两个部分,由"空格"分割
+                                        string[] Day = yearMonthDay[0].Split(new[] { "-" }, StringSplitOptions.None); //将按钮名字分为three个部分,由"-"分割
+                                        if (Convert.ToInt32(text[0]) == Convert.ToInt32(Day[2]))// || Convert.ToInt32(text[1]) == Convert.ToInt32(Day[2]))
                                         {
-                                            string[] yearMonthDay = c.Text.Split(new[] { " " }, StringSplitOptions.None); //将按钮名字分为两个部分,由"空格"分割
-                                            string[] Day = yearMonthDay[0].Split(new[] { "-" }, StringSplitOptions.None); //将按钮名字分为three个部分,由"-"分割
-                                            if (Convert.ToInt32(text[0]) == Convert.ToInt32(Day[2]))// || Convert.ToInt32(text[1]) == Convert.ToInt32(Day[2]))
+                                            string buttonText = c.Text;
+                                            DateTime defautTime = Convert.ToDateTime(yearMonthDay[0]);
+                                            DateTime morningTime;
+                                            DateTime afterTime;
+                                            string morningText = "";
+                                            string afterText = "";
+
+                                            //Form1 fom = new Form1();
+                                            LimitMorningTime = fom.SetLimShowUpTime;
+                                            AfternoonTime = fom.SetLimDissmisTime;
+                                            string aa = Convert.ToDateTime(yearMonthDay[0]).DayOfWeek.ToString();
+                                            if (Convert.ToDateTime(yearMonthDay[0]).DayOfWeek.ToString() != "Saturday"
+                                                && Convert.ToDateTime(yearMonthDay[0]).DayOfWeek.ToString() != "Sunday")
                                             {
-                                                string buttonText = c.Text;
-                                                DateTime defautTime = Convert.ToDateTime(yearMonthDay[0]);
-                                                DateTime morningTime;
-                                                DateTime afterTime;
-                                                string morningText = "";
-                                                string afterText = "";
-
-                                                Form1 fom = new Form1();
-                                                DateTime LimitMorningTime = fom.SetLimShowUpTime;
-                                                DateTime AfternoonTime = fom.SetLimDissmisTime;
-
-                                                if ((FWT.amTime == null) && (FWT.pmTime == null))
+                                                if ((FWT.amTime == null) && (FWT.pmTime == null)) //没有记录数据
                                                 {
                                                     parPresente = true;
                                                     c.BackColor = Color.Violet;
+                                                    _noData++;
                                                 }
                                                 else
                                                 {
-                                                    if (FWT.amTime == null)
+                                                    if (FWT.amTime == null) //缺失上午的数据
                                                     {
                                                         c.BackColor = Color.Pink;
+                                                        _question++;
                                                     }
-                                                    else
+                                                    else if(FWT.amTime != null&& FWT.pmTime != null)  //有上午的时间时
                                                     {
                                                         morningTime = Convert.ToDateTime(DateTime.Now.ToShortDateString()) + FWT.amTime.amTime;
                                                         morningText = FWT.amTime.amTime.ToString();
@@ -293,16 +322,19 @@ namespace C_Excel
                                                         {
                                                             //第一个时间比第二个时间大
                                                             c.BackColor = Color.Red;
+                                                            _late++;
                                                         }
                                                         else
                                                         {
                                                             //第一个时间比第二个时间小
                                                             c.BackColor = Color.Lime;
+                                                            _inTime++;
                                                         }
                                                     }
-                                                    if (FWT.pmTime == null)
+                                                    if (FWT.pmTime == null) //缺失下午的数据
                                                     {
                                                         c.BackColor = Color.Pink;
+                                                        _noSignOff++;
                                                     }
                                                     else
                                                     {
@@ -310,36 +342,50 @@ namespace C_Excel
                                                         afterText = FWT.pmTime.pmTime.ToString();
                                                     }
                                                 }
-                                                c.Text = buttonText + System.Environment.NewLine + morningText + "-" + afterText.ToString();
-
-
-                                                break;
                                             }
-                                            
+                                            else
+                                            {
+
+                                            }
+                                            c.Text = buttonText + System.Environment.NewLine + morningText + "-" + afterText.ToString();
+
+
+                                            break;
                                         }
-                                    }
-                                    else
-                                    {
-                                        break;
+
                                     }
                                 }
-
-                                #endregion 
-                                if (_eventAdded != true)
+                                else
                                 {
-                                    c.MouseClick += c_MouseClick;
+                                    break;
                                 }
                             }
+
+                            #endregion
+                            memberState = new MemberChuQingStatistics(_name, _late, _inTime, _question, _noSignOff, _noData);
+                            MemberChuQingList.Add(memberState);
+
+                            B_InTime.Text = "准时" + System.Environment.NewLine + memberState.workerOnTime + "天";
+                            B_Late.Text = "迟到" + System.Environment.NewLine + memberState.workerIsLate + "天";
+                            B_NotShowUp.Text = "旷工" + System.Environment.NewLine + memberState.BadData + "天";
+                            B_Question.Text = "未知" + System.Environment.NewLine + memberState.dataInQuestion + "天";
+                            B_NoSignOff.Text = "未打卡下班" + System.Environment.NewLine + memberState.workerNotSignOff + "天";
+
+                            if (_eventAdded != true)
+                            {
+                                c.MouseClick += c_MouseClick;
+                            }
                         }
-                        
                     }
-                    _eventAdded = true;
-                }
-                else
-                {
 
                 }
+                _eventAdded = true;
             }
+            else
+            {
+
+            }
+            //}
             int a = listPassedMember.Count();
             toolStripProgressBar1.Value = a;
         }
@@ -354,7 +400,7 @@ namespace C_Excel
                 string[] partText = text.Split(new[] { "\r\n" }, StringSplitOptions.None); //将按钮名字分为两个部分,由"空格"分割
                 string toolInformation = partText[0];// +" 星期" + partText[1] + " ";
 
-                
+
                 if (_ShiJia == true)
                 {
                     if (((Control)sender).BackColor != Color.Aqua)
@@ -362,9 +408,68 @@ namespace C_Excel
                         ((Control)sender).BackColor = Color.Aqua;
                         toolState.Text = toolInformation + comboxMember.SelectedItem.ToString() + "申请事假";
 
-                        Leave_Reason_Date _reasonAndDate=new Leave_Reason_Date(partText[0],"事假");
+                        Leave_Reason_Date _reasonAndDate = new Leave_Reason_Date(partText[0], "事假");
                         Member_Leave _memberChuQing = new Member_Leave(comboxMember.SelectedItem.ToString(), _reasonAndDate);
-                        Member_NotShowUp.Add(_memberChuQing);
+                        
+                        string[] _tempText=((Control)sender).Text.Split(new[] { "\r\n" }, StringSplitOptions.None); //将按钮名字分为两个部分,由"\r\n"分割
+                        string[] _tempText1=_tempText[1].Split(new[] { "-" }, StringSplitOptions.None); //将按钮名字分为两个部分,由"\r\n"分割
+                        string partText1=_tempText1[0]; //早上
+                        string partText2=_tempText1[1]; //晚上
+
+                        if (partText1 == null && partText2 == null)
+                        {
+                            foreach (MemberChuQingStatistics MCQS in MemberChuQingList)
+                            {
+                                if (MCQS.workerName == comboxMember.SelectedItem.ToString())
+                                {
+                                    MCQS.BadData -= 1;
+                                    break;
+                                }
+                            }
+                        }
+                        else if (partText1 != null) //如果出差/请假则不记录出勤状态
+                        {
+
+                            //AfternoonTime = fom.SetLimDissmisTime;
+                            LimitMorningTime = fom.SetLimShowUpTime;
+                            TimeSpan time1 = Convert.ToDateTime(partText1).TimeOfDay;
+                            TimeSpan limitTime = LimitMorningTime.TimeOfDay;
+                            if (time1 >= limitTime) //如果已经被记录为迟到着删除.
+                            {
+                                foreach (MemberChuQingStatistics MCQS in MemberChuQingList)
+                                {
+                                    if (MCQS.workerName == comboxMember.SelectedItem.ToString())
+                                    {
+                                        MCQS.workerIsLate -= 1;
+                                        break;
+                                    }
+                                }
+                            }
+                            else  //如果记录为准时
+                            {
+                                foreach (MemberChuQingStatistics MCQS in MemberChuQingList)
+                                {
+                                    if (MCQS.workerName == comboxMember.SelectedItem.ToString())
+                                    {
+                                        MCQS.workerOnTime -= 1;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else if (partText2 == null)  //如果出差/请假则不记录出勤状态   
+                        {
+                            foreach (MemberChuQingStatistics MCQS in MemberChuQingList)
+                            {
+                                if (MCQS.workerName == comboxMember.SelectedItem.ToString())
+                                {
+                                    MCQS.workerNotSignOff -= 1;
+                                    break;
+                                }
+                            }
+                        }
+
+
                     }
                     else
                     {
@@ -483,9 +588,8 @@ namespace C_Excel
 
         public void WorkingPassion(List<Form1.Member_Departement_Communications> MCs)
         {
-            Form1 form1 = new Form1();
-            DateTime DissmisTime = form1.SetLimDissmisTime;
-            DateTime LimShowUpTime = form1.SetLimShowUpTime;
+            AfternoonTime = fom.SetLimDissmisTime;
+            LimitMorningTime = fom.SetLimShowUpTime;
 
             foreach (Form1.Member_Departement_Communications mc in MCs)
             {
@@ -517,10 +621,10 @@ namespace C_Excel
                             if (wt.amTime != null && wt.pmTime != null)
                             {
                                 //将数据转换为timeSpan格式
-                                DateTime _timeLim = LimShowUpTime;
+                                DateTime _timeLim = LimitMorningTime;
                                 TimeSpan limitTimeSpan = _timeLim.TimeOfDay;
 
-                                if (form1.CompareTime(wt.amTime.amTime, limitTimeSpan))
+                                if (fom.CompareTime(wt.amTime.amTime, limitTimeSpan))
                                 {
                                     _late++;
                                 }
@@ -550,8 +654,8 @@ namespace C_Excel
 
                     }
                 }
-                MemberChuQingState MCQS = new MemberChuQingState(EmployerName, _late, _inTime, _question, _noSignOff, _noData);
-                MemberChuQingList.Add(MCQS);
+                //MemberChuQingState MCQS = new MemberChuQingState(EmployerName, _late, _inTime, _question, _noSignOff, _noData);
+                //MemberChuQingList.Add(MCQS);
             }
         }
 
