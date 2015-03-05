@@ -34,7 +34,7 @@ namespace C_Excel
         public class AMTime
         {
             private TimeSpan _am_Time;
-            public TimeSpan _amTime
+            public TimeSpan amTime
             {
                 get { return _am_Time; }
                 set { _am_Time = value; }
@@ -42,7 +42,7 @@ namespace C_Excel
 
             public AMTime(TimeSpan AmTime)
             {
-                this._amTime = AmTime;
+                this.amTime = AmTime;
             }
         }
 
@@ -78,14 +78,14 @@ namespace C_Excel
                 set { this._stringDate = value; }
             }
             private AMTime _time_am;
-            public AMTime _amTime
+            public AMTime amTime
             {
                 get { return this._time_am; }
                 set { this._time_am = value; }
             }
 
             private PMTime _time_pm;
-            public PMTime _pmTime
+            public PMTime pmTime
             {
                 get { return this._time_pm; }
                 set { this._time_pm = value; }
@@ -94,26 +94,30 @@ namespace C_Excel
             public WorkTime()
             {
             }
+            public WorkTime(List<string> StringDate)
+            {
+                this._Date = StringDate;
+            }
 
             public WorkTime(List<string> StringDate, PMTime PmTime)
             {
                 this._Date = StringDate;
-                this._pmTime = PmTime;
+                this.pmTime = PmTime;
             }
             public WorkTime(List<string> StringDate, AMTime AmTime)
             {
                 this._Date = StringDate;
-                this._amTime = AmTime;
+                this.amTime = AmTime;
             }
 
             public WorkTime(List<string> StringDate, AMTime AmTime, PMTime PmTime)
             {
                 this._Date = StringDate;
-                this._amTime = AmTime;
-                this._pmTime = PmTime;
+                this.amTime = AmTime;
+                this.pmTime = PmTime;
             }
         }
-
+                
         public class Member_Departement_Communications
         {
             private string _name;
@@ -128,6 +132,7 @@ namespace C_Excel
                 get { return this._workTime; }
                 set { this._workTime = value; }
             }
+
 
             public Member_Departement_Communications()
             {                
@@ -145,8 +150,95 @@ namespace C_Excel
             }
         }
 
+        public class WorkTimeState : WorkTime
+        {
 
+            private string _leaveReason;
+            public string leaveReason
+            {
+                get { return _leaveReason; }
+                set { this._leaveReason = value; }
+            }
 
+            public WorkTimeState(List<string> StringDate, string LeaveReason)
+            {
+                this._Date = StringDate;
+                this.leaveReason = LeaveReason;
+            }
+
+            public WorkTimeState(List<string> StringDate, PMTime PmTime, string LeaveReason)
+            {
+                this._Date = StringDate;
+                this.pmTime = PmTime;
+                this.leaveReason = LeaveReason;
+            }
+            public WorkTimeState(List<string> StringDate, AMTime AmTime, string LeaveReason)
+            {
+                this._Date = StringDate;
+                this.amTime = AmTime;
+                this.leaveReason = LeaveReason;
+            }
+
+            public WorkTimeState(List<string> StringDate, AMTime AmTime, PMTime PmTime, string LeaveReason)
+            {
+                this._Date = StringDate;
+                this.amTime = AmTime;
+                this.pmTime = PmTime;
+                this.leaveReason = LeaveReason;
+            }
+            /*public WorkTimeState(WorkTime WorkTime, string LeaveReason)
+            {
+                this.workTime = WorkTime;
+                this.leaveReason = LeaveReason;
+            }*/
+        }
+
+        public class Member_Dep_Com_WorkingState:Member_Departement_Communications
+        {
+            private int isLate;
+            private int onTime;
+            private int inQuestion;
+            private int notSignOff;
+
+            private List<WorkTimeState> _workTimeState;
+            public List<WorkTimeState> workTimeState
+            {
+                get { return this._workTimeState; }
+                set { this._workTimeState = value; }
+            }
+
+            public int workerIsLate
+            {
+                get { return isLate; }
+                set { isLate = value; }
+            }
+
+            public int workerOnTime
+            {
+                get { return onTime; }
+                set { onTime = value; }
+            }
+            public int dataInQuestion
+            {
+                get { return inQuestion; }
+                set { inQuestion = value; }
+            }
+            public int workerNotSignOff
+            {
+                get { return notSignOff; }
+                set { notSignOff = value; }
+            }
+
+            public Member_Dep_Com_WorkingState(string WorkerName ,List<WorkTimeState> WorkTime_State, int WorkerIsLate, int WorkerOnTime, int DataInQuestion, int WorkerNotSignOff)
+            {
+                this.name = WorkerName;
+                this.workTimeState = WorkTime_State;
+                this.workerIsLate = WorkerIsLate;
+                this.workerOnTime = WorkerOnTime;
+                this.dataInQuestion = DataInQuestion;
+                this.workerNotSignOff = WorkerNotSignOff;
+            }
+        }
         FunctionsCS fcs = new FunctionsCS();
 
         public List<WorkTime> listWorkTime; //上班时间
@@ -450,7 +542,7 @@ namespace C_Excel
                                     {
                                         AMTime _errorA = new AMTime(Convert.ToDateTime("0:00:00").TimeOfDay);
                                         PMTime _errorP = new PMTime(Convert.ToDateTime("0:00:00").TimeOfDay);
-                                        wt = new WorkTime();
+                                        wt = new WorkTime(inDate);
                                     }
                                     else
                                     {
@@ -799,7 +891,7 @@ namespace C_Excel
         public void WorkingPassion(List<Member_Departement_Communications> MCs)
         {    
             
-            string StatueOfEmployer = null;
+            string StateOfEmployer = null;
 
             foreach (Member_Departement_Communications mc in MCs)
             {
@@ -812,7 +904,7 @@ namespace C_Excel
                 int _question = 0;
                 foreach (WorkTime wt in _listWorkTime)
                 {
-                    if (wt._amTime != null && wt._pmTime != null)
+                    if (wt.amTime != null && wt.pmTime != null)
                     {
                         //将数据转换为timeSpan格式
 
@@ -820,7 +912,7 @@ namespace C_Excel
                         DateTime _timeLim = this.SetLimShowUpTime;
                         TimeSpan ts = _timeLim.TimeOfDay;
 
-                        if (CompareTime(wt._amTime._amTime, ts))
+                        if (CompareTime(wt.amTime.amTime, ts))
                         {
                             _late++;
                         }
@@ -829,21 +921,21 @@ namespace C_Excel
                             _inTime++;
                         }
                     }
-                    else if (wt._amTime == null)
+                    else if (wt.amTime == null)
                     {
                         _question++;
                     }
-                    else if (wt._pmTime == null)
+                    else if (wt.pmTime == null)
                     {
                         _noSignOff++;
                     }
                 }
-                string _statueOfEmployer = EmployerName + System.Environment.NewLine + "\t准时到达:"
+                string _stateOfEmployer = EmployerName + System.Environment.NewLine + "\t准时到达:"
                     + _inTime + "次." + System.Environment.NewLine + " \t迟到:" + _late + "次." + System.Environment.NewLine + " \t无早上数据:"
                     + _question + "次. " + System.Environment.NewLine + "\t无下午数据:" + _noSignOff + "次. " + System.Environment.NewLine + System.Environment.NewLine;
-                StatueOfEmployer = StatueOfEmployer + _statueOfEmployer;
+                StateOfEmployer = StateOfEmployer + _stateOfEmployer;
             }
-            textBox2.Text = StatueOfEmployer;
+            textBox2.Text = StateOfEmployer;
         }
 
 
