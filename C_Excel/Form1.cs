@@ -275,7 +275,7 @@ namespace C_Excel
         #region but1
         private void button1_Click(object sender, EventArgs e)
         {
-            string fileName = null;
+            /*string fileName = null;
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Multiselect = true;
             fileDialog.Title = "请选择文件.";
@@ -324,7 +324,7 @@ namespace C_Excel
             else
             {
                 MessageBox.Show(dtResponse.Message, "错误:");
-            }
+            }*/
         }
         #endregion
 
@@ -431,6 +431,17 @@ namespace C_Excel
         }
         #endregion
 
+        string start;
+        string end;
+
+        string startY;
+        string startM;
+        string StartD;
+
+        string endY;
+        string endM;
+        string endD;
+
         //当遇到名字或者 "11 一 "类似的格式时.
         private void button3_Click(object sender, EventArgs e)
         {
@@ -443,6 +454,9 @@ namespace C_Excel
             List<string> MemberName = new List<string>();
             WorkTime wt;
             listWorkTime = new List<WorkTime>();//员工每日出勤时间
+            
+            int countDay=1;
+
 
             try
             {
@@ -470,17 +484,18 @@ namespace C_Excel
                                 //记录文件所记录月份.
                                 if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^((\d{4})-([0,1]?\d)-([0,3]?\d))--(\d{4}-([0,1]?\d)-([0,3]?\d))$", out MemberName))
                                 {
+                                    
+                                    start = MemberName[0];
+                                    end = MemberName[4];
+                                    
+                                    startY = MemberName[1];
+                                    startM = MemberName[2];
+                                    StartD = MemberName[3];
+                                    
+                                    endY = MemberName[4];
+                                    endM = MemberName[5];
+                                    endD = MemberName[6];
 
-                                    string start = MemberName[0];
-                                    string end = MemberName[4];
-
-                                    string startY = MemberName[1];
-                                    string startM = MemberName[2];
-                                    string StartD = MemberName[3];
-
-                                    string endY = MemberName[4];
-                                    string endM = MemberName[5];
-                                    string endD = MemberName[6];
                                     foreach (string _str in MemberName)
                                     {
                                         LaDuree.Add(_str);
@@ -488,9 +503,10 @@ namespace C_Excel
 
                                     this.Text = "通信所" + start + "至" + end + "考勤记录";
                                 }
-                                //当数据为2或3位汉字时
+                                //当数据为2或3位汉字时 记录为姓名
                                 if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out MemberName) && MemberName[0] != "通信所" && MemberName[0] != "赵煜")//|| _begin == true)// && MemberName[0] != "通信所" && _appMemberName.Count == 0)
                                 {
+                                    countDay = 1;
                                     string memberName = "";
                                     memberName = MemberName[0];
                                     //尚未遍历,列表为空
@@ -516,43 +532,55 @@ namespace C_Excel
                                 List<string> inDate = new List<string>();
                                 if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out inDate))
                                 {
-                                    DateTime currentDate = NowTime;
-                                    int lastMoth = Convert.ToInt32(currentDate.Month) - 1;
-                                    int currentyear = Convert.ToInt32(currentDate.Year);
-                                    /*
-                                    //将数据转换为 年/月/日/星期 格式
-                                    StringBuilder DateZh = new StringBuilder();
-                                    DateZh.Append(currentyear.ToString() + "-" + lastMoth.ToString() + "-" + inDate[0] + "-星期" + inDate[1]);
 
-                                    StringBuilder StartTime = new StringBuilder();
-                                    StartTime.Append(currentyear.ToString() + "," + lastMoth.ToString() + "," + inDate[0]);
-
-                                    StringBuilder StopTime = new StringBuilder();
-                                    StopTime.Append(currentyear.ToString() + "," + lastMoth.ToString() + "," + inDate[0]);
-                                    
-                                    dr[dc] = DateZh.ToString();
-                                    */
-
-                                    string strColName = dc.ColumnName.ToString();
-
-                                    DataRow seleRow = DT.Rows[Nrow];
-                                    string dataInCol = seleRow[dc].ToString();
-                                    //string str = dtc.[Nrow + 1];
-
-                                    if (dataInCol.Replace(" ", "") == "-" || dataInCol.Replace(" ", "") == "")
+                                    string a = inDate[0];
+                                    string b = inDate[1];
+                                    if (countDay <= Convert.ToInt32(endD)) 
                                     {
-                                        wt = new WorkTime(inDate);
+                                        countDay++;
+                                        //DateTime currentDate = NowTime;
+                                        //int lastMoth = Convert.ToInt32(LaDuree[2]);
+                                        //int currentyear = Convert.ToInt32(LaDuree[1]);
+                                        /*
+                                        //将数据转换为 年/月/日/星期 格式
+                                        StringBuilder DateZh = new StringBuilder();
+                                        DateZh.Append(currentyear.ToString() + "-" + lastMoth.ToString() + "-" + inDate[0] + "-星期" + inDate[1]);
+
+                                        StringBuilder StartTime = new StringBuilder();
+                                        StartTime.Append(currentyear.ToString() + "," + lastMoth.ToString() + "," + inDate[0]);
+
+                                        StringBuilder StopTime = new StringBuilder();
+                                        StopTime.Append(currentyear.ToString() + "," + lastMoth.ToString() + "," + inDate[0]);
+                                    
+                                        dr[dc] = DateZh.ToString();
+                                        */
+
+                                        string strColName = dc.ColumnName.ToString();
+
+                                        DataRow seleRow = DT.Rows[Nrow];
+                                        string dataInCol = seleRow[dc].ToString();
+                                        //string str = dtc.[Nrow + 1];
+
+                                        if (dataInCol.Replace(" ", "") == "-" || dataInCol.Replace(" ", "") == "")
+                                        {
+                                            wt = new WorkTime(inDate);
+                                        }
+                                        else
+                                        {
+                                            wt = fcs.ConvertStringToDateTime(dataInCol, inDate);
+                                        }
+
+                                        listWorkTime.Add(wt);
+                                        //MessageBox.Show("" + DateZh.ToString() + "---" + strColName + "---" + dataInCol);
+                                        //Convert.ToDateTime(StartTime.ToString());
+                                        //continue; 
                                     }
                                     else
                                     {
-                                        wt = fcs.ConvertStringToDateTime(dataInCol, inDate);
-                                    }
 
-                                    listWorkTime.Add(wt);
-                                    //MessageBox.Show("" + DateZh.ToString() + "---" + strColName + "---" + dataInCol);
-                                    //Convert.ToDateTime(StartTime.ToString());
-                                    //continue;
+                                    }
                                 }
+
                             }
                         }
 
@@ -849,29 +877,7 @@ namespace C_Excel
         }
         #endregion
 
-        /*
-        //判定正则表达式，返回值由正则表达式确定
-        public bool isExMatch(string text, string patten, out List<string> Match)
-        {
-            bool _isMatch = false;
-            Regex Patten = new Regex(patten);
-            List<string> _match = new List<string>();
-            //if (Regex.IsMatch(text, patten))
-            if(Patten.Match(text).Success)
-            {
-                _isMatch = true;
-                for (int num = 1; num < Patten.Match(text).Groups.Count; num++)
-                {
-                    _match.Add(Patten.Match(text).Groups[num].Value);
-                }
 
-            }
-            else
-                _isMatch = false;
-            Match = _match;
-            return _isMatch;
-        }
-        */
 
         //比较两个时间的早晚, 测试时间比时限大时返回true
         public bool CompareTime(TimeSpan time1, TimeSpan TimeLimit)
@@ -933,7 +939,7 @@ namespace C_Excel
                     + _question + "次. " + System.Environment.NewLine + "\t无下午数据:" + _noSignOff + "次. " + System.Environment.NewLine + System.Environment.NewLine;
                 StateOfEmployer = StateOfEmployer + _stateOfEmployer;
             }
-            textBox2.Text = StateOfEmployer;
+            //textBox2.Text = StateOfEmployer;
         }
 
 
@@ -1007,34 +1013,43 @@ namespace C_Excel
             //if (Regex.IsMatch(textBox1.Text.Replace(" ", "").Substring(0, 4), @"^((20|21|22|23|[0-1]?\d):[0-5]?\d)$"))
             if (fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b)
                 //|| isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d:[0-5]?\d)$", out b) 
-                || fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-$", out b)
+                || fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b)
                 || fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out b))
             {
                 foreach (string c in b)
                 {
                     d = d + c + "+++";
+                    
                 }
-
+                //textBox2.Text = d;
                 //CompareTime(Convert.ToDateTime(b[0]), Convert.ToDateTime(b[1]));
                 //textBox2.Text = "true    " + d;
             }
-            else if (fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d):[0-5]?\d$", out b))
+            //^(([1-9]{1})|([0-1][0-9])|([1-2][0-3])):([0-5][0-9])$
+
+            //else if (fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^(([0-1]?[0-9])|([2][0-3])):([0-5]?[0-9])(:([0-5]?[0-9]))?-(([0-1]?[0-9])|([2][0-3])):([0-5]?[0-9])(:([0-5]?[0-9]))?$", out b))
+            else if (fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^([1-9]{1}|[0-1][0-9]|[1-2][0-3]):([0-5][0-9])-([1-9]{1}|[0-1][0-9]|[1-2][0-3]):([0-5][0-9])$", out b))
             {
-                textBox2.Text = "true    " + b[0];
+                foreach (string c in b)
+                {
+                    d = d + c + "+++";
+
+                }
+                //textBox2.Text = "true    " + d;
 
             }
             else if (fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out b))
             {
-                textBox2.Text = "true    " + b[0];
+                //textBox2.Text = "true    " + b[0];
             }
             //
             else if (fcs.isExMatch(textBox1.Text.Replace(" ", ""), @"(^[\u4e00-\u9fa5]{2,3})$", out b))
             {
-                textBox2.Text = "true    " + b[0];
+                //textBox2.Text = "true    " + b[0];
             }
             else
             {
-                MessageBox.Show("");
+                MessageBox.Show("no match");
             }
             //return Regex.IsMatch(StrSource, @"^((20|21|22|23|[0-1]?\d):[0-5]?\d:[0-5]?\d)$");
         }

@@ -70,6 +70,22 @@ namespace C_Excel
                 //listWorkTime.Add(_workTime);
 
             }
+
+                //20:xx匹配20:xx
+            else if (isExMatch(strTime.Replace(" ", ""), @"^([1-9]{1}|[0-1][0-9]|[1-2][0-3]):([0-5][0-9])-([1-9]{1}|[0-1][0-9]|[1-2][0-3]):([0-5][0-9])$", out MathGroup))
+            {
+                List<string> SplitText = new List<string>();
+                for (int a = 0; a < MathGroup.Count; a++)
+                {
+                    if (MathGroup[a] != null && MathGroup[a] != "")
+                    {
+                        SplitText.Add(MathGroup[a]);
+                    }
+                }
+                AmTime = new Form1.AMTime(Convert.ToDateTime(MathGroup[0] + ":" + MathGroup[1]).TimeOfDay);
+                PmTime = new Form1.PMTime(Convert.ToDateTime(MathGroup[2] + ":" + MathGroup[3]).TimeOfDay);
+                dateTime = new Form1.WorkTime(strDate, AmTime, PmTime);//(AmTime, PmTime);
+            }
             else
             {
                 string aaa = strTime;

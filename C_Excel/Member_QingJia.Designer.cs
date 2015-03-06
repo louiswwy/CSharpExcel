@@ -83,35 +83,34 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.B_Late = new System.Windows.Forms.Button();
+            this.B_NoSignOff = new System.Windows.Forms.Button();
+            this.B_InTime = new System.Windows.Forms.Button();
             this.B_Question = new System.Windows.Forms.Button();
             this.B_NotShowUp = new System.Windows.Forms.Button();
-            this.B_Vacance = new System.Windows.Forms.Button();
-            this.B_InTime = new System.Windows.Forms.Button();
-            this.B_Late = new System.Windows.Forms.Button();
             this.comboxMember = new System.Windows.Forms.ComboBox();
+            this.B_Vacance = new System.Windows.Forms.Button();
             this.B_ShiJia = new System.Windows.Forms.Button();
             this.B_ChuChai = new System.Windows.Forms.Button();
-            this.label8 = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolTimer = new System.Windows.Forms.ToolStripStatusLabel();
             this.分割线3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.分割线4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolinfor = new System.Windows.Forms.ToolStripStatusLabel();
+            this.分割线2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.分割线1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolState = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.B_NoSignOff = new System.Windows.Forms.Button();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.分割线2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.分割线4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // B_Cancel
@@ -645,15 +644,66 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.groupBox4);
+            this.groupBox2.Controls.Add(this.groupBox3);
             this.groupBox2.Controls.Add(this.comboxMember);
             this.groupBox2.Controls.Add(this.groupBox1);
             this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.groupBox2.Location = new System.Drawing.Point(22, 25);
+            this.groupBox2.Location = new System.Drawing.Point(22, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(950, 430);
+            this.groupBox2.Size = new System.Drawing.Size(950, 449);
             this.groupBox2.TabIndex = 44;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "人员";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.B_Late);
+            this.groupBox4.Controls.Add(this.B_NoSignOff);
+            this.groupBox4.Controls.Add(this.B_InTime);
+            this.groupBox4.Controls.Add(this.B_Question);
+            this.groupBox4.Controls.Add(this.B_NotShowUp);
+            this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.groupBox4.Location = new System.Drawing.Point(475, 10);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(466, 78);
+            this.groupBox4.TabIndex = 47;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "统计";
+            // 
+            // B_Late
+            // 
+            this.B_Late.BackColor = System.Drawing.Color.Red;
+            this.B_Late.Enabled = false;
+            this.B_Late.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.B_Late.Location = new System.Drawing.Point(19, 15);
+            this.B_Late.Name = "B_Late";
+            this.B_Late.Size = new System.Drawing.Size(76, 57);
+            this.B_Late.TabIndex = 42;
+            this.B_Late.Text = "迟到";
+            this.B_Late.UseVisualStyleBackColor = false;
+            // 
+            // B_NoSignOff
+            // 
+            this.B_NoSignOff.Enabled = false;
+            this.B_NoSignOff.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.B_NoSignOff.Location = new System.Drawing.Point(347, 15);
+            this.B_NoSignOff.Name = "B_NoSignOff";
+            this.B_NoSignOff.Size = new System.Drawing.Size(97, 57);
+            this.B_NoSignOff.TabIndex = 86;
+            this.B_NoSignOff.Text = "下班未打卡";
+            this.B_NoSignOff.UseVisualStyleBackColor = true;
+            // 
+            // B_InTime
+            // 
+            this.B_InTime.BackColor = System.Drawing.Color.Lime;
+            this.B_InTime.Enabled = false;
+            this.B_InTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.B_InTime.Location = new System.Drawing.Point(101, 15);
+            this.B_InTime.Name = "B_InTime";
+            this.B_InTime.Size = new System.Drawing.Size(76, 57);
+            this.B_InTime.TabIndex = 43;
+            this.B_InTime.Text = "准时";
+            this.B_InTime.UseVisualStyleBackColor = false;
             // 
             // B_Question
             // 
@@ -662,7 +712,7 @@
             this.B_Question.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.B_Question.Location = new System.Drawing.Point(265, 15);
             this.B_Question.Name = "B_Question";
-            this.B_Question.Size = new System.Drawing.Size(76, 51);
+            this.B_Question.Size = new System.Drawing.Size(76, 57);
             this.B_Question.TabIndex = 85;
             this.B_Question.Text = "未知";
             this.B_Question.UseVisualStyleBackColor = false;
@@ -674,49 +724,16 @@
             this.B_NotShowUp.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.B_NotShowUp.Location = new System.Drawing.Point(183, 15);
             this.B_NotShowUp.Name = "B_NotShowUp";
-            this.B_NotShowUp.Size = new System.Drawing.Size(76, 51);
+            this.B_NotShowUp.Size = new System.Drawing.Size(76, 57);
             this.B_NotShowUp.TabIndex = 45;
             this.B_NotShowUp.Text = "旷工";
             this.B_NotShowUp.UseVisualStyleBackColor = false;
             // 
-            // B_Vacance
-            // 
-            this.B_Vacance.BackColor = System.Drawing.Color.Orange;
-            this.B_Vacance.Location = new System.Drawing.Point(202, 15);
-            this.B_Vacance.Name = "B_Vacance";
-            this.B_Vacance.Size = new System.Drawing.Size(76, 51);
-            this.B_Vacance.TabIndex = 44;
-            this.B_Vacance.Text = "节假日";
-            this.B_Vacance.UseVisualStyleBackColor = false;
-            this.B_Vacance.Click += new System.EventHandler(this.B_Vacance_Click);
-            // 
-            // B_InTime
-            // 
-            this.B_InTime.BackColor = System.Drawing.Color.Lime;
-            this.B_InTime.Enabled = false;
-            this.B_InTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.B_InTime.Location = new System.Drawing.Point(101, 15);
-            this.B_InTime.Name = "B_InTime";
-            this.B_InTime.Size = new System.Drawing.Size(76, 51);
-            this.B_InTime.TabIndex = 43;
-            this.B_InTime.Text = "准时";
-            this.B_InTime.UseVisualStyleBackColor = false;
-            // 
-            // B_Late
-            // 
-            this.B_Late.BackColor = System.Drawing.Color.Red;
-            this.B_Late.Enabled = false;
-            this.B_Late.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.B_Late.Location = new System.Drawing.Point(19, 15);
-            this.B_Late.Name = "B_Late";
-            this.B_Late.Size = new System.Drawing.Size(76, 51);
-            this.B_Late.TabIndex = 42;
-            this.B_Late.Text = "迟到";
-            this.B_Late.UseVisualStyleBackColor = false;
-            // 
             // comboxMember
             // 
+            this.comboxMember.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.comboxMember.FormattingEnabled = true;
+            this.comboxMember.ItemHeight = 13;
             this.comboxMember.Location = new System.Drawing.Point(27, 20);
             this.comboxMember.Name = "comboxMember";
             this.comboxMember.Size = new System.Drawing.Size(121, 21);
@@ -724,13 +741,24 @@
             this.comboxMember.SelectedIndexChanged += new System.EventHandler(this.comboxMember_SelectedIndexChanged);
             this.comboxMember.SelectionChangeCommitted += new System.EventHandler(this.comboxMember_SelectionChangeCommitted);
             // 
+            // B_Vacance
+            // 
+            this.B_Vacance.BackColor = System.Drawing.Color.Orange;
+            this.B_Vacance.Location = new System.Drawing.Point(202, 15);
+            this.B_Vacance.Name = "B_Vacance";
+            this.B_Vacance.Size = new System.Drawing.Size(76, 57);
+            this.B_Vacance.TabIndex = 44;
+            this.B_Vacance.Text = "节假日";
+            this.B_Vacance.UseVisualStyleBackColor = false;
+            this.B_Vacance.Click += new System.EventHandler(this.B_Vacance_Click);
+            // 
             // B_ShiJia
             // 
             this.B_ShiJia.BackColor = System.Drawing.Color.Aqua;
             this.B_ShiJia.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.B_ShiJia.Location = new System.Drawing.Point(120, 15);
             this.B_ShiJia.Name = "B_ShiJia";
-            this.B_ShiJia.Size = new System.Drawing.Size(76, 51);
+            this.B_ShiJia.Size = new System.Drawing.Size(76, 57);
             this.B_ShiJia.TabIndex = 41;
             this.B_ShiJia.Text = "事假";
             this.B_ShiJia.UseVisualStyleBackColor = false;
@@ -742,20 +770,11 @@
             this.B_ChuChai.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.B_ChuChai.Location = new System.Drawing.Point(38, 15);
             this.B_ChuChai.Name = "B_ChuChai";
-            this.B_ChuChai.Size = new System.Drawing.Size(76, 51);
+            this.B_ChuChai.Size = new System.Drawing.Size(76, 57);
             this.B_ChuChai.TabIndex = 40;
             this.B_ChuChai.Text = "出差";
             this.B_ChuChai.UseVisualStyleBackColor = false;
             this.B_ChuChai.Click += new System.EventHandler(this.B_ChuChai_Click);
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(478, 9);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(35, 13);
-            this.label8.TabIndex = 45;
-            this.label8.Text = "label8";
             // 
             // statusStrip1
             // 
@@ -788,9 +807,15 @@
             // 
             this.分割线3.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
             this.分割线3.Name = "分割线3";
-            this.分割线3.Size = new System.Drawing.Size(207, 21);
+            this.分割线3.Size = new System.Drawing.Size(222, 21);
             this.分割线3.Spring = true;
             this.分割线3.Text = "分割线";
+            // 
+            // 分割线4
+            // 
+            this.分割线4.Name = "分割线4";
+            this.分割线4.Size = new System.Drawing.Size(131, 21);
+            this.分割线4.Text = "toolStripStatusLabel2";
             // 
             // toolinfor
             // 
@@ -799,6 +824,20 @@
             this.toolinfor.Name = "toolinfor";
             this.toolinfor.Size = new System.Drawing.Size(36, 21);
             this.toolinfor.Text = "提示";
+            // 
+            // 分割线2
+            // 
+            this.分割线2.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
+            this.分割线2.Name = "分割线2";
+            this.分割线2.Size = new System.Drawing.Size(135, 21);
+            this.分割线2.Text = "toolStripStatusLabel2";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(222, 21);
+            this.toolStripStatusLabel1.Spring = true;
+            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
             // 分割线1
             // 
@@ -828,64 +867,19 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // B_NoSignOff
-            // 
-            this.B_NoSignOff.Enabled = false;
-            this.B_NoSignOff.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.B_NoSignOff.Location = new System.Drawing.Point(347, 15);
-            this.B_NoSignOff.Name = "B_NoSignOff";
-            this.B_NoSignOff.Size = new System.Drawing.Size(76, 51);
-            this.B_NoSignOff.TabIndex = 86;
-            this.B_NoSignOff.Text = "没有打卡下班";
-            this.B_NoSignOff.UseVisualStyleBackColor = true;
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(207, 21);
-            this.toolStripStatusLabel1.Spring = true;
-            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
-            // 
-            // 分割线2
-            // 
-            this.分割线2.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
-            this.分割线2.Name = "分割线2";
-            this.分割线2.Size = new System.Drawing.Size(135, 21);
-            this.分割线2.Text = "toolStripStatusLabel2";
-            // 
-            // 分割线4
-            // 
-            this.分割线4.Name = "分割线4";
-            this.分割线4.Size = new System.Drawing.Size(131, 21);
-            this.分割线4.Text = "toolStripStatusLabel2";
-            // 
             // groupBox3
             // 
+            this.groupBox3.BackColor = System.Drawing.SystemColors.Control;
             this.groupBox3.Controls.Add(this.B_ChuChai);
             this.groupBox3.Controls.Add(this.B_Vacance);
             this.groupBox3.Controls.Add(this.B_ShiJia);
-            this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.groupBox3.Location = new System.Drawing.Point(188, 41);
+            this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.groupBox3.Location = new System.Drawing.Point(166, 10);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(303, 72);
+            this.groupBox3.Size = new System.Drawing.Size(303, 78);
             this.groupBox3.TabIndex = 87;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "设置";
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.B_Late);
-            this.groupBox4.Controls.Add(this.B_NoSignOff);
-            this.groupBox4.Controls.Add(this.B_InTime);
-            this.groupBox4.Controls.Add(this.B_Question);
-            this.groupBox4.Controls.Add(this.B_NotShowUp);
-            this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.groupBox4.Location = new System.Drawing.Point(497, 16);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(445, 72);
-            this.groupBox4.TabIndex = 47;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "统计";
             // 
             // Member_QingJia
             // 
@@ -894,9 +888,7 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(984, 527);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.B_Valide);
-            this.Controls.Add(this.label8);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.B_Cancel);
             this.MaximumSize = new System.Drawing.Size(1000, 700);
@@ -910,10 +902,10 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.groupBox3.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -933,7 +925,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ComboBox comboxMember;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button B_InTime;
         private System.Windows.Forms.Button B_Late;
         private System.Windows.Forms.Button B_ShiJia;
