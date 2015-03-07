@@ -198,6 +198,7 @@ namespace C_Excel
 
             this.timer1.Enabled = true;
             timer1.Start();
+
             if (((Form1)this.MdiParent).LaDuree.Count != 0)
             {
                 List<string> a = ((Form1)this.MdiParent).LaDuree;
@@ -208,14 +209,27 @@ namespace C_Excel
                 this.Text = _str + defautTitle;
 
                 groupBox1.Text = a[2] + "月月历";
+
+                int numberOfMonth = Convert.ToInt32(a[a.Count - 1]);
                 foreach (Form1.Member_Departement_Communications item in ((Form1)this.MdiParent).ListMemberSchedule)
                 {
                     ListOfMemberName.Add(item.name);
                     comboxMember.Items.Add(item.name);
-                }
-                fileTheCalendar();
 
-                //MessageBox.Show(a);
+                    //将周六日默认为放假
+                    for (int numDay = 1; numDay <= numberOfMonth; numDay++)
+                    {
+
+                        DateTime isWeekend = new DateTime(Convert.ToInt32(a[1]), Convert.ToInt32(a[2]), numDay);
+                        if (isWeekend.DayOfWeek.ToString() == "Saturday" || isWeekend.DayOfWeek.ToString() == "Sunday")
+                        {
+                            Leave_Reason_Date LRD = new Leave_Reason_Date(a[1] + "." + a[2] + "." + numDay, "放假");
+                            Member_Leave memberL = new Member_Leave(item.name, LRD);
+                            Member_NotShowUp.Add(memberL);
+                        }
+                    }
+                }
+                    fileTheCalendar();
             }
             else
             {
@@ -462,68 +476,40 @@ namespace C_Excel
                         toolState.Text = toolInformation + comboxMember.SelectedItem.ToString() + "申请事假";
 
                         Leave_Reason_Date _reasonAndDate = new Leave_Reason_Date(partText[0], "事假");
-                        Member_Leave _memberChuQing = new Member_Leave(comboxMember.SelectedItem.ToString(), _reasonAndDate);
-                        #region aaa
-                        /*
-                        string[] _tempText=((Control)sender).Text.Split(new[] { "\r\n" }, StringSplitOptions.None); //将按钮名字分为两个部分,由"\r\n"分割
-                        string[] _tempText1=_tempText[1].Split(new[] { "-" }, StringSplitOptions.None); //将按钮名字分为两个部分,由"\r\n"分割
-                        string partText1=_tempText1[0]; //早上
-                        string partText2=_tempText1[1]; //晚上
 
-                        if (partText1 == null && partText2 == null)
+                        bool _inTheList = false; 
+                        
+                        ///遍历请假表,    
+                        /// 如果遍历后任然没有找到相同项则添加,  
+                        /// 如果找到相同项则不添加.    
+                        /// 如果找到时间,姓名相同而请假理由不同的项则修改请假原因
+                        foreach (Member_Leave checkIfInTheList in Member_NotShowUp)
                         {
-                            foreach (MemberChuQingStatistics MCQS in MemberChuQingList)
+                            //如果都不同
+                            if (checkIfInTheList.workerName == comboxMember.SelectedItem.ToString()
+                                && checkIfInTheList.memberLeave.date == partText[0]
+                                && checkIfInTheList.memberLeave.leaveReason == "事假")
                             {
-                                if (MCQS.workerName == comboxMember.SelectedItem.ToString())
-                                {
-                                    MCQS.BadData -= 1;
-                                    break;
-                                }
+                                //已经在表中则不添加
+                                _inTheList = true;
+                                break;
+                            }
+                            else if (checkIfInTheList.workerName == comboxMember.SelectedItem.ToString()
+                                && checkIfInTheList.memberLeave.date == partText[0]
+                                && checkIfInTheList.memberLeave.leaveReason != "事假")
+                            {
+                                //如果在请假表中找到相同名字,相同日期但是不同请假原因的项则说明请假原因以改变.则更改表中对应项
+                                checkIfInTheList.memberLeave.leaveReason = "事假";
+                                break;
                             }
                         }
-                        else if (partText1 != null) //如果出差/请假则不记录出勤状态
-                        {
 
-                            //AfternoonTime = fom.SetLimDissmisTime;
-                            LimitMorningTime = fom.SetLimShowUpTime;
-                            TimeSpan time1 = Convert.ToDateTime(partText1).TimeOfDay;
-                            TimeSpan limitTime = LimitMorningTime.TimeOfDay;
-                            if (time1 >= limitTime) //如果已经被记录为迟到着删除.
-                            {
-                                foreach (MemberChuQingStatistics MCQS in MemberChuQingList)
-                                {
-                                    if (MCQS.workerName == comboxMember.SelectedItem.ToString())
-                                    {
-                                        MCQS.workerIsLate -= 1;
-                                        break;
-                                    }
-                                }
-                            }
-                            else  //如果记录为准时
-                            {
-                                foreach (MemberChuQingStatistics MCQS in MemberChuQingList)
-                                {
-                                    if (MCQS.workerName == comboxMember.SelectedItem.ToString())
-                                    {
-                                        MCQS.workerOnTime -= 1;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else if (partText2 == null)  //如果出差/请假则不记录出勤状态   
+                        if (_inTheList == false)
                         {
-                            foreach (MemberChuQingStatistics MCQS in MemberChuQingList)
-                            {
-                                if (MCQS.workerName == comboxMember.SelectedItem.ToString())
-                                {
-                                    MCQS.workerNotSignOff -= 1;
-                                    break;
-                                }
-                            }
+                            Member_Leave _memberChuQing = new Member_Leave(comboxMember.SelectedItem.ToString(), _reasonAndDate);
+                            Member_NotShowUp.Add(_memberChuQing);
                         }
-                        */
-                        #endregion
+
 
                     }
                     else
@@ -544,8 +530,39 @@ namespace C_Excel
                         toolState.Text = toolInformation + comboxMember.SelectedItem.ToString() + "申请出差";
 
                         Leave_Reason_Date _reasonAndDate = new Leave_Reason_Date(partText[0], "出差");
-                        Member_Leave _memberChuQing = new Member_Leave(comboxMember.SelectedItem.ToString(), _reasonAndDate);
-                        Member_NotShowUp.Add(_memberChuQing);
+
+                        bool _inTheList = false;
+
+                        ///遍历请假表,    
+                        /// 如果遍历后任然没有找到相同项则添加,  
+                        /// 如果找到相同项则不添加.    
+                        /// 如果找到时间,姓名相同而请假理由不同的项则修改请假原因
+                        foreach (Member_Leave checkIfInTheList in Member_NotShowUp)
+                        {
+                            //如果都不同
+                            if (checkIfInTheList.workerName == comboxMember.SelectedItem.ToString()
+                                && checkIfInTheList.memberLeave.date == partText[0]
+                                && checkIfInTheList.memberLeave.leaveReason == "出差")
+                            {
+                                //已经在表中则不添加
+                                _inTheList = true;
+                                break;
+                            }
+                            else if (checkIfInTheList.workerName == comboxMember.SelectedItem.ToString()
+                                && checkIfInTheList.memberLeave.date == partText[0]
+                                && checkIfInTheList.memberLeave.leaveReason != "出差")
+                            {
+                                //如果在请假表中找到相同名字,相同日期但是不同请假原因的项则说明请假原因以改变.则更改表中对应项
+                                checkIfInTheList.memberLeave.leaveReason = "出差";
+                                break;
+                            }
+                        }
+
+                        if (_inTheList == false)
+                        {
+                            Member_Leave _memberChuQing = new Member_Leave(comboxMember.SelectedItem.ToString(), _reasonAndDate);
+                            Member_NotShowUp.Add(_memberChuQing);
+                        }
                     }
                     else
                     {
@@ -564,8 +581,39 @@ namespace C_Excel
                         toolState.Text = toolInformation + comboxMember.SelectedItem.ToString() + "申请放假";
 
                         Leave_Reason_Date _reasonAndDate = new Leave_Reason_Date(partText[0], "放假");
-                        Member_Leave _memberChuQing = new Member_Leave(comboxMember.SelectedItem.ToString(), _reasonAndDate);
-                        Member_NotShowUp.Add(_memberChuQing);
+
+                        bool _inTheList = false;
+
+                        ///遍历请假表,    
+                        /// 如果遍历后任然没有找到相同项则添加,  
+                        /// 如果找到相同项则不添加.    
+                        /// 如果找到时间,姓名相同而请假理由不同的项则修改请假原因
+                        foreach (Member_Leave checkIfInTheList in Member_NotShowUp)
+                        {
+                            //如果都不同
+                            if (checkIfInTheList.workerName == comboxMember.SelectedItem.ToString()
+                                && checkIfInTheList.memberLeave.date == partText[0]
+                                && checkIfInTheList.memberLeave.leaveReason == "放假")
+                            {
+                                //已经在表中则不添加
+                                _inTheList = true;
+                                break;
+                            }
+                            else if (checkIfInTheList.workerName == comboxMember.SelectedItem.ToString()
+                                && checkIfInTheList.memberLeave.date == partText[0]
+                                && checkIfInTheList.memberLeave.leaveReason != "放假")
+                            {
+                                //如果在请假表中找到相同名字,相同日期但是不同请假原因的项则说明请假原因以改变.则更改表中对应项
+                                checkIfInTheList.memberLeave.leaveReason = "放假";
+                                break;
+                            }
+                        }
+
+                        if (_inTheList == false)
+                        {
+                            Member_Leave _memberChuQing = new Member_Leave(comboxMember.SelectedItem.ToString(), _reasonAndDate);
+                            Member_NotShowUp.Add(_memberChuQing);
+                        }
                     }
                     else
                     {
@@ -629,6 +677,7 @@ namespace C_Excel
                                 if (Convert.ToInt32(textReaded[0]) == Convert.ToInt32(DaysButton[2]))// || Convert.ToInt32(text[1]) == Convert.ToInt32(Day[2]))
                                 {
                                     bool _jumpToNextLoop = false;
+
                                     foreach (Member_Leave M_L in Member_NotShowUp)
                                     {
                                         List<string> a = ((Form1)this.MdiParent).LaDuree;
@@ -640,11 +689,11 @@ namespace C_Excel
                                             {
                                                 c.BackColor = Color.Yellow;
                                             }
-                                            else if (M_L.memberLeave.leaveReason == "放假")
+                                            else if (M_L.memberLeave.leaveReason == "事假")
                                             {
                                                 c.BackColor = Color.Aqua;
                                             }
-                                            else if (M_L.memberLeave.leaveReason == "节假日")
+                                            else if (M_L.memberLeave.leaveReason == "放假")
                                             {
                                                 c.BackColor = Color.Orange;
                                             }
@@ -814,6 +863,7 @@ namespace C_Excel
             string toolInformation = Date[0] + " 星期" + Date[1] + " ";
             toolState.Text = "取消 " + toolInformation + " " + comboxMember.SelectedItem.ToString() + "申请事假"; 
         }
+
         private void Member_QingJia_Resize(object sender, EventArgs e)
         {
 
@@ -825,44 +875,6 @@ namespace C_Excel
             }
         }
 
-        #region change methode, not good
-        /*
-        public void LoadMemberLeaveList()
-        {
-
-            foreach (Control c in this.panel1.Controls)
-            {
-
-                if (c is Button)
-                {
-                    string text = c.Text;
-                    string[] partText = text.Split(new[] { "\r\n" }, StringSplitOptions.None); //将按钮名字分为两个部分,由"空格"分割
-
-                    Member_Leave _memberChuQing;
-
-                    if (c.BackColor == Color.Aqua)
-                    {
-                        Leave_Reason_Date _reasonAndDate = new Leave_Reason_Date(partText[0], "事假");
-                        _memberChuQing = new Member_Leave(comboxMember.SelectedItem.ToString(), _reasonAndDate);
-                        Member_NotShowUp.Add(_memberChuQing);
-                    }
-                    else if (c.BackColor == Color.Yellow)
-                    {
-                        Leave_Reason_Date _reasonAndDate = new Leave_Reason_Date(partText[0], "出差");
-                        _memberChuQing = new Member_Leave(comboxMember.SelectedItem.ToString(), _reasonAndDate);
-                        Member_NotShowUp.Add(_memberChuQing);
-                    }
-                    else if (c.BackColor == Color.Orange)
-                    {
-                        Leave_Reason_Date _reasonAndDate = new Leave_Reason_Date(partText[0], "放假");
-                        _memberChuQing = new Member_Leave(comboxMember.SelectedItem.ToString(), _reasonAndDate);
-                        Member_NotShowUp.Add(_memberChuQing);
-                    }
-                }
-            }
-        }
-         */
-        #endregion
 
         public void WorkingPassion(List<Form1.Member_Departement_Communications> MCs)
         {
