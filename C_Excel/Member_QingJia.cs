@@ -114,7 +114,10 @@ namespace C_Excel
             }
         }
 
+
+
         private bool _startProcecs = false;
+
         /*************/
         bool _ChuChai = false;
         bool _ShiJia = false;
@@ -136,20 +139,29 @@ namespace C_Excel
             InitializeComponent();            
         }
 
+        public delegate void MyDelegate();
+        //定义事件
+        public event MyDelegate PantResultatEvent;
+
 
         private void B_Valide_Click(object sender, EventArgs e)
         {
             int nonVisited = 0;
+
             StringBuilder str = new StringBuilder();
-            if (listPassedMember.Count() == ((Form1)this.Owner).ListMemberSchedule.Count())
+            if (listPassedMember.Count() == ((Form1)this.MdiParent).ListMemberSchedule.Count())
             {
-                //LoadMemberLeaveList();
-                //WorkingPassion(((Form1)this.Owner).ListMemberSchedule);
+                fom.DataIsSet = true;
+                output formOutPut = new output(MemberChuQingList);
+                formOutPut.Owner = this;
+                formOutPut.Show();
+                bool a=formOutPut.IsDisposed;
+                //this.Close();
             }
             else
             {
                 //显示没有设置出差/事假人员名单.
-                foreach (Form1.Member_Departement_Communications lmdc in ((Form1)this.Owner).ListMemberSchedule)
+                foreach (Form1.Member_Departement_Communications lmdc in ((Form1)this.MdiParent).ListMemberSchedule)
                 {
                     if (!listPassedMember.Contains(lmdc.name))
                     {
@@ -157,9 +169,10 @@ namespace C_Excel
                         str.Append("\t" + lmdc.name + System.Environment.NewLine);
                     }
                 }
-                MessageBox.Show("还有" + nonVisited + "名员工休假状况未定义"+System.Environment.NewLine+"分别是:"+System.Environment.NewLine+
+                MessageBox.Show("还有" + nonVisited + "名员工休假状况未定义" + System.Environment.NewLine + "分别是:" + System.Environment.NewLine +
                 str.ToString(), "注意", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+
         }
 
         private void B_Cancel_Click(object sender, EventArgs e)
@@ -169,7 +182,7 @@ namespace C_Excel
 
         private void Member_QingJia_Load(object sender, EventArgs e)
         {
-            int b = ((Form1)this.Owner).ListMemberSchedule.Count();
+            int b = ((Form1)this.MdiParent).ListMemberSchedule.Count();
             toolStripProgressBar1.Maximum = b;
             toolStripProgressBar1.Style = ProgressBarStyle.Blocks;
 
@@ -185,17 +198,17 @@ namespace C_Excel
 
             this.timer1.Enabled = true;
             timer1.Start();
-            if (((Form1)this.Owner).LaDuree.Count != 0)
+            if (((Form1)this.MdiParent).LaDuree.Count != 0)
             {
-                List<string> a = ((Form1)this.Owner).LaDuree;
+                List<string> a = ((Form1)this.MdiParent).LaDuree;
                 string _str = a[0] + " -- " + a[4] + " ";
 
                 //显示label
                 string defautTitle = this.Text;
-                this.Text = _str + defautTitle;                
-                
+                this.Text = _str + defautTitle;
+
                 groupBox1.Text = a[2] + "月月历";
-                foreach (Form1.Member_Departement_Communications item in ((Form1)this.Owner).ListMemberSchedule)
+                foreach (Form1.Member_Departement_Communications item in ((Form1)this.MdiParent).ListMemberSchedule)
                 {
                     ListOfMemberName.Add(item.name);
                     comboxMember.Items.Add(item.name);
@@ -209,49 +222,51 @@ namespace C_Excel
                 MessageBox.Show("需要先倒入Excel文件.", "注意", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
                 this.Close();
             }
-            
         }
 
         private bool _eventAdded = false;
         private void comboxMember_SelectionChangeCommitted(object sender, EventArgs e)
         {
 
-            //if (/*!listPassedMember.Contains(this.comboxMember.SelectedItem.ToString()) ||*/ listPassedMember.Count == 0)
-            //{
-            _startProcecs = true;
-            //刷新按钮颜色.
-            fileTheCalendar();
-            _ChuChai = false;
-            _ShiJia = false;
-            _Vacance = false;
-            B_ChuChai.FlatStyle = FlatStyle.Standard;
-            B_ShiJia.FlatStyle = FlatStyle.Standard;
-            B_Vacance.FlatStyle = FlatStyle.Standard;
-
-            B_ChuChai.BackColor = Color.Yellow;
-            B_ShiJia.BackColor = Color.Aqua;
-            B_Vacance.BackColor = Color.Orange;
-
-            string _name = ((Form1)this.Owner).ListMemberSchedule[comboxMember.SelectedIndex].name;
-
-            if (!listPassedMember.Contains(_name))
+            if (comboxMember.SelectedItem != null && comboxMember.SelectedItem != "")
             {
-                listPassedMember.Add(_name);
-            }
+                //if (/*!listPassedMember.Contains(this.comboxMember.SelectedItem.ToString()) ||*/ listPassedMember.Count == 0)
+                //{
+                _startProcecs = true;
+                //刷新按钮颜色.
+                fileTheCalendar();
+                _ChuChai = false;
+                _ShiJia = false;
+                _Vacance = false;
+                B_ChuChai.FlatStyle = FlatStyle.Standard;
+                B_ShiJia.FlatStyle = FlatStyle.Standard;
+                B_Vacance.FlatStyle = FlatStyle.Standard;
 
-            //List<Form1.WorkTime> _lWorkTime = ((Form1)this.Owner).ListMemberSchedule[comboxMember.SelectedIndex].workTime;
+                B_ChuChai.BackColor = Color.Yellow;
+                B_ShiJia.BackColor = Color.Aqua;
+                B_Vacance.BackColor = Color.Orange;
+
+                string _name = ((Form1)this.MdiParent).ListMemberSchedule[comboxMember.SelectedIndex].name;
+
+                if (!listPassedMember.Contains(_name))
+                {
+                    listPassedMember.Add(_name);
+                }
+
+                //List<Form1.WorkTime> _lWorkTime = ((Form1)this.MdiParent).ListMemberSchedule[comboxMember.SelectedIndex].workTime;
 
 
-            toolinfor.Text = "可以通过点击上方按钮来为每个员工定义出差或休假日期.";
+                toolinfor.Text = "可以通过点击上方按钮来为每个员工定义出差或休假日期.";
 
-            toolStripStatusLabel1.Text = "以设置:" + listPassedMember.Count + "/" + ((Form1)this.Owner).ListMemberSchedule.Count + "成员";
-            toolState.Text = "选中:" + _name;
-            if (_name != "")
-            {
-                PaintAndCalcule(_name);
-                #region 1111
-                /*
-                List<Form1.WorkTime> LFWT = ((Form1)this.Owner).ListMemberSchedule[comboxMember.SelectedIndex].workTime;
+                toolStripStatusLabel1.Text = "以设置:" + listPassedMember.Count + "/" + ((Form1)this.MdiParent).ListMemberSchedule.Count + "成员";
+                toolState.Text = "选中:" + _name;
+                if (_name != "")
+                {
+                    PaintAndCalcule(_name);
+
+                    #region 1111
+                    /*
+                List<Form1.WorkTime> LFWT = ((Form1)this.MdiParent).ListMemberSchedule[comboxMember.SelectedIndex].workTime;
 
                 //定义
                 MemberChuQingStatistics memberState;
@@ -415,16 +430,17 @@ namespace C_Excel
                 }
                 _eventAdded = true;
                  */
-                #endregion
+                    #endregion
 
-            }
-            else
-            {
+                }
+                else
+                {
 
+                }
+                //}
+                int a = listPassedMember.Count();
+                toolStripProgressBar1.Value = a;
             }
-            //}
-            int a = listPassedMember.Count();
-            toolStripProgressBar1.Value = a;
         }
 
         void c_MouseClick(object sender, MouseEventArgs e)
@@ -567,7 +583,7 @@ namespace C_Excel
 
         private void PaintAndCalcule(string MemberShown)
         {
-            List<Form1.WorkTime> LFWT = ((Form1)this.Owner).ListMemberSchedule[comboxMember.SelectedIndex].workTime;
+            List<Form1.WorkTime> LFWT = ((Form1)this.MdiParent).ListMemberSchedule[comboxMember.SelectedIndex].workTime;
 
             //定义
             MemberChuQingStatistics memberState;
@@ -615,11 +631,24 @@ namespace C_Excel
                                     bool _jumpToNextLoop = false;
                                     foreach (Member_Leave M_L in Member_NotShowUp)
                                     {
-                                        List<string> a = ((Form1)this.Owner).LaDuree;
+                                        List<string> a = ((Form1)this.MdiParent).LaDuree;
                                         if (M_L.workerName == comboxMember.SelectedItem.ToString() 
                                             && M_L.memberLeave.date == a[1] + "." + a[2] + "." + DaysButton[2])
                                         {
                                             _jumpToNextLoop = true;
+                                            if (M_L.memberLeave.leaveReason == "出差")
+                                            {
+                                                c.BackColor = Color.Yellow;
+                                            }
+                                            else if (M_L.memberLeave.leaveReason == "放假")
+                                            {
+                                                c.BackColor = Color.Aqua;
+                                            }
+                                            else if (M_L.memberLeave.leaveReason == "节假日")
+                                            {
+                                                c.BackColor = Color.Orange;
+                                            }
+
                                             break;
                                         }
                                         
@@ -788,9 +817,9 @@ namespace C_Excel
         private void Member_QingJia_Resize(object sender, EventArgs e)
         {
 
-            if (((Form1)this.Owner).LaDuree.Count != 0)
+            if (((Form1)this.MdiParent).LaDuree.Count != 0)
             {
-                List<string> a = ((Form1)this.Owner).LaDuree;
+                List<string> a = ((Form1)this.MdiParent).LaDuree;
                 string _str = a[0] + " -- " + a[3];
 
             }
@@ -863,7 +892,7 @@ namespace C_Excel
                     if (wt._Date != null)//只计算本月的数据
                     {
                         //InTheList(List<Member_Leave> LML,string memberName, string textAnalys)
-                        string workDay = ((Form1)this.Owner).LaDuree[1] + "-" + ((Form1)this.Owner).LaDuree[2] + "-" + wt._Date[0]; //从excel文件中读取的日期
+                        string workDay = ((Form1)this.MdiParent).LaDuree[1] + "-" + ((Form1)this.MdiParent).LaDuree[2] + "-" + wt._Date[0]; //从excel文件中读取的日期
 
                         if (!InTheList(_tempChuQing, EmployerName, workDay))
                         {
@@ -926,7 +955,7 @@ namespace C_Excel
 
         public void fileTheCalendar()
         {
-            List<string> a = ((Form1)this.Owner).LaDuree;
+            List<string> a = ((Form1)this.MdiParent).LaDuree;
             int numberButton = 0;   //以遍历的按钮的个数
             int numberDayOfWeek = 1;    //星期
             int numberDayInMonth = 1;
@@ -1054,6 +1083,7 @@ namespace C_Excel
                     B_ChuChai.FlatStyle = FlatStyle.Standard;
                     B_ChuChai.BackColor = Color.Yellow;
                     _ChuChai = false;
+                    toolinfor.Text = "";
                 }
             }
         }
@@ -1089,6 +1119,7 @@ namespace C_Excel
                     B_ShiJia.FlatStyle = FlatStyle.Standard;
                     B_ShiJia.BackColor = Color.Aqua;
                     _ShiJia = false;
+                    toolinfor.Text = "";
                 }
             }
 
@@ -1124,6 +1155,7 @@ namespace C_Excel
                     B_Vacance.FlatStyle = FlatStyle.Standard;
                     B_Vacance.BackColor = Color.Orange;
                     _Vacance = false;
+                    toolinfor.Text = "";
                 }
             }
 
@@ -1136,6 +1168,19 @@ namespace C_Excel
 
         private void comboxMember_SelectedIndexChanged(object sender, EventArgs e)
         {
+        }
+
+        private void Member_QingJia_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            DialogResult messageboxResult = MessageBox.Show("确认关闭么?", "注意", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            if (messageboxResult == DialogResult.OK)
+            {
+                e.Cancel = false;
+            }
+            else
+            {
+                e.Cancel = true;
+            }
         }
 
 

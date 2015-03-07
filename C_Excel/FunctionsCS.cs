@@ -86,6 +86,10 @@ namespace C_Excel
                 PmTime = new Form1.PMTime(Convert.ToDateTime(MathGroup[2] + ":" + MathGroup[3]).TimeOfDay);
                 dateTime = new Form1.WorkTime(strDate, AmTime, PmTime);//(AmTime, PmTime);
             }
+            else if (isExMatch(strTime.Replace(" ", ""), @"^0.\d*$", out MathGroup))
+            {
+                MessageBox.Show("error");
+            }
             else
             {
                 string aaa = strTime;

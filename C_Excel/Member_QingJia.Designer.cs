@@ -89,10 +89,11 @@
             this.B_InTime = new System.Windows.Forms.Button();
             this.B_Question = new System.Windows.Forms.Button();
             this.B_NotShowUp = new System.Windows.Forms.Button();
-            this.comboxMember = new System.Windows.Forms.ComboBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.B_ChuChai = new System.Windows.Forms.Button();
             this.B_Vacance = new System.Windows.Forms.Button();
             this.B_ShiJia = new System.Windows.Forms.Button();
-            this.B_ChuChai = new System.Windows.Forms.Button();
+            this.comboxMember = new System.Windows.Forms.ComboBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolTimer = new System.Windows.Forms.ToolStripStatusLabel();
             this.分割线3 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -104,13 +105,12 @@
             this.toolState = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // B_Cancel
@@ -729,17 +729,31 @@
             this.B_NotShowUp.Text = "旷工";
             this.B_NotShowUp.UseVisualStyleBackColor = false;
             // 
-            // comboxMember
+            // groupBox3
             // 
-            this.comboxMember.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.comboxMember.FormattingEnabled = true;
-            this.comboxMember.ItemHeight = 13;
-            this.comboxMember.Location = new System.Drawing.Point(27, 20);
-            this.comboxMember.Name = "comboxMember";
-            this.comboxMember.Size = new System.Drawing.Size(121, 21);
-            this.comboxMember.TabIndex = 39;
-            this.comboxMember.SelectedIndexChanged += new System.EventHandler(this.comboxMember_SelectedIndexChanged);
-            this.comboxMember.SelectionChangeCommitted += new System.EventHandler(this.comboxMember_SelectionChangeCommitted);
+            this.groupBox3.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox3.Controls.Add(this.B_ChuChai);
+            this.groupBox3.Controls.Add(this.B_Vacance);
+            this.groupBox3.Controls.Add(this.B_ShiJia);
+            this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.groupBox3.Location = new System.Drawing.Point(166, 10);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(303, 78);
+            this.groupBox3.TabIndex = 87;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "设置";
+            // 
+            // B_ChuChai
+            // 
+            this.B_ChuChai.BackColor = System.Drawing.Color.Yellow;
+            this.B_ChuChai.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.B_ChuChai.Location = new System.Drawing.Point(38, 15);
+            this.B_ChuChai.Name = "B_ChuChai";
+            this.B_ChuChai.Size = new System.Drawing.Size(76, 57);
+            this.B_ChuChai.TabIndex = 40;
+            this.B_ChuChai.Text = "出差";
+            this.B_ChuChai.UseVisualStyleBackColor = false;
+            this.B_ChuChai.Click += new System.EventHandler(this.B_ChuChai_Click);
             // 
             // B_Vacance
             // 
@@ -764,17 +778,17 @@
             this.B_ShiJia.UseVisualStyleBackColor = false;
             this.B_ShiJia.Click += new System.EventHandler(this.B_ShiJia_Click);
             // 
-            // B_ChuChai
+            // comboxMember
             // 
-            this.B_ChuChai.BackColor = System.Drawing.Color.Yellow;
-            this.B_ChuChai.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.B_ChuChai.Location = new System.Drawing.Point(38, 15);
-            this.B_ChuChai.Name = "B_ChuChai";
-            this.B_ChuChai.Size = new System.Drawing.Size(76, 57);
-            this.B_ChuChai.TabIndex = 40;
-            this.B_ChuChai.Text = "出差";
-            this.B_ChuChai.UseVisualStyleBackColor = false;
-            this.B_ChuChai.Click += new System.EventHandler(this.B_ChuChai_Click);
+            this.comboxMember.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.comboxMember.FormattingEnabled = true;
+            this.comboxMember.ItemHeight = 13;
+            this.comboxMember.Location = new System.Drawing.Point(27, 20);
+            this.comboxMember.Name = "comboxMember";
+            this.comboxMember.Size = new System.Drawing.Size(121, 21);
+            this.comboxMember.TabIndex = 39;
+            this.comboxMember.SelectedIndexChanged += new System.EventHandler(this.comboxMember_SelectedIndexChanged);
+            this.comboxMember.SelectionChangeCommitted += new System.EventHandler(this.comboxMember_SelectionChangeCommitted);
             // 
             // statusStrip1
             // 
@@ -867,20 +881,6 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // groupBox3
-            // 
-            this.groupBox3.BackColor = System.Drawing.SystemColors.Control;
-            this.groupBox3.Controls.Add(this.B_ChuChai);
-            this.groupBox3.Controls.Add(this.B_Vacance);
-            this.groupBox3.Controls.Add(this.B_ShiJia);
-            this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox3.Location = new System.Drawing.Point(166, 10);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(303, 78);
-            this.groupBox3.TabIndex = 87;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "设置";
-            // 
             // Member_QingJia
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -896,6 +896,7 @@
             this.Name = "Member_QingJia";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "员工请假/出差表";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Member_QingJia_FormClosing);
             this.Load += new System.EventHandler(this.Member_QingJia_Load);
             this.Resize += new System.EventHandler(this.Member_QingJia_Resize);
             this.groupBox1.ResumeLayout(false);
@@ -903,9 +904,9 @@
             this.panel1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
