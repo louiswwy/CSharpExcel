@@ -65,7 +65,7 @@ namespace C_Excel
                     using (var sfd = new SaveFileDialog())
                     {
                         sfd.Filter = "文本文件(*.txt)|*.txt";
-                        sfd.FileName = duree[1] + "至" + duree[4] + "考勤记录";
+                        sfd.FileName = duree[0] + "至" + duree[4] + "考勤记录";
                         if (sfd.ShowDialog() == DialogResult.OK && sfd.FileName != "")
                         {
                             File.WriteAllText(sfd.FileName, str.ToString());
@@ -90,7 +90,7 @@ namespace C_Excel
                     using (var sfd = new SaveFileDialog())
                     {
                         sfd.Filter = "Excel97-2003文件|*.xls;*.xlt;*.xltm|Excel2007-2010|*.xlsx|所有文件(*.*)|*.*";
-                        sfd.FileName = duree[1] + "至" + duree[4] + "考勤记录统计";
+                        sfd.FileName = duree[0] + "至" + duree[4] + "考勤记录统计";
                         if (sfd.ShowDialog() == DialogResult.OK && sfd.FileName != "")
                         {
                             SaveDataTableToExcel(ExcelTable, sfd.FileName);

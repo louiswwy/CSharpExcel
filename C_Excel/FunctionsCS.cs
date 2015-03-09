@@ -15,12 +15,14 @@ namespace C_Excel
         }
 
 
-        public Form1.WorkTime ConvertStringToDateTime(string strTime, List<string> strDate)
+        public Form1.WorkTime ConvertStringToDateTime(string strTime, List<string> strDate, out bool workState)
         {
             //Form1.WorkTime dateTime;// = new Form1.WorkTime();
             List<string> MathGroup = new List<string>();
             Form1.AMTime AmTime;
             Form1.PMTime PmTime;
+
+            bool isWorkingOkState = true;
 
             //当时间格式为xx:xx-yy:yy时
             if (isExMatch(strTime.Replace(" ", ""), @"^(20|21|22|23|[0-1]?\d:[0-5]?\d)-(20|21|22|23|[0-1]?\d:[0-5]?\d)$", out MathGroup))
@@ -88,7 +90,8 @@ namespace C_Excel
             }
             else if (isExMatch(strTime.Replace(" ", ""), @"^0.\d*$", out MathGroup))
             {
-                MessageBox.Show("error");
+                //MessageBox.Show("error");
+                isWorkingOkState = false;
             }
             else
             {
@@ -97,7 +100,7 @@ namespace C_Excel
                 dateTime = new Form1.WorkTime(strDate, AmTime);
             }
 
-
+            workState = isWorkingOkState;
             return dateTime;
         }
 

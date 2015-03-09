@@ -654,10 +654,8 @@ namespace C_Excel
 
 
 
-        private void B_Calendar_Click(object sender, EventArgs e)
-        {
-  
-        }
+    
+
 
         private void B_Test_Click(object sender, EventArgs e)
         {
@@ -851,7 +849,13 @@ namespace C_Excel
                                         }
                                         else
                                         {
-                                            wt = fcs.ConvertStringToDateTime(dataInCol, inDate);
+                                            bool isWorkingOk;
+                                            wt = fcs.ConvertStringToDateTime(dataInCol, inDate, out isWorkingOk);
+
+                                        }
+                                        if (!isWorkingOk)
+                                        {
+                                            MessageBox.Show("数据读取错误.", "警告", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                                         }
 
                                         listWorkTime.Add(wt);
