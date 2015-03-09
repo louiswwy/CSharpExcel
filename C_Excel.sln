@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.22310.1
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C_Excel", "C_Excel\C_Excel.csproj", "{B9BBD1E8-2CE6-4BD0-AFE4-284DAAB78BFF}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "C_ExcelSetUp", "C_ExcelSetUp\C_ExcelSetUp.vdproj", "{F59F0D97-9DE8-419A-9F57-740DD3077717}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,8 @@ Global
 		{B9BBD1E8-2CE6-4BD0-AFE4-284DAAB78BFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9BBD1E8-2CE6-4BD0-AFE4-284DAAB78BFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9BBD1E8-2CE6-4BD0-AFE4-284DAAB78BFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F59F0D97-9DE8-419A-9F57-740DD3077717}.Debug|Any CPU.ActiveCfg = Debug
+		{F59F0D97-9DE8-419A-9F57-740DD3077717}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

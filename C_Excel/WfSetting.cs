@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace C_Excel
 {
@@ -53,6 +54,11 @@ namespace C_Excel
         XmlDocument xmldoc;
         //XmlNode xmlnode;
         //XmlElement xmlelem;
+
+        /*
+         if (!System.IO.File.Exists(this.textBox_xlsPath.Text))
+         */
+
 
         private void B_Valide_Click(object sender, EventArgs e)
         {
@@ -131,28 +137,54 @@ namespace C_Excel
             try
             {
                 xmldoc = new XmlDocument();
-                xmldoc.Load(@"..\..\DataFile\WorkTime.xml");    //读取指定的XML文档
-                XmlNode NodeWorkTime = xmldoc.DocumentElement;  //读取xml的根节点
-
-                foreach (XmlNode node in NodeWorkTime.ChildNodes)//循环子节点
+                if (System.IO.File.Exists(@"..\..\DataFile\WorkTime.xml"))
                 {
-                    switch (node.Name)
+                    xmldoc.Load(@"..\..\DataFile\WorkTime.xml");    //读取指定的XML文档
+                    XmlNode NodeWorkTime = xmldoc.DocumentElement;  //读取xml的根节点
+
+                    foreach (XmlNode node in NodeWorkTime.ChildNodes)//循环子节点
                     {
-                        case "ShowUpTime":
-                            if (node.InnerText != "")
-                            {
-                                T_ShowUp.Text = node.InnerText;
-                            }
+                        switch (node.Name)
+                        {
+                            case "ShowUpTime":
+                                if (node.InnerText != "")
+                                {
+                                    T_ShowUp.Text = node.InnerText;
+                                }
 
-                            break;
+                                break;
 
-                        case "dissmisTime":
-                            if (node.InnerText != "")
-                            {
-                                T_Dissmis.Text = node.InnerText;
-                            }
-                            break;
+                            case "dissmisTime":
+                                if (node.InnerText != "")
+                                {
+                                    T_Dissmis.Text = node.InnerText;
+                                }
+                                break;
+                        }
                     }
+                }
+                else
+                {
+
+
+                    string path = @"..\..\DataFile\WorkTime.xml";
+
+                    //XDocument xdoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
+                    //
+                    //                               new XElement("Root", "root"));
+
+                    ///<workTime>
+                    /// <ShowUpTime>8:46</ShowUpTime>
+                    /// <dissmisTime>17:30</dissmisTime>
+                    ///</workTime>
+                    XElement root = new XElement("workTime",
+
+                        new XElement("ShowUpTime", "8:46"),
+                        new XElement("dissmisTime", "17:30")
+                        );
+
+                    root.Save(path);
+
                 }
             }
             catch (Exception ex)
