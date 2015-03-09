@@ -33,7 +33,6 @@
             this.lblMessage = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.B_Calendar = new System.Windows.Forms.Button();
             this.B_Test = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -79,17 +78,6 @@
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // B_Calendar
-            // 
-            this.B_Calendar.Location = new System.Drawing.Point(26, 83);
-            this.B_Calendar.Name = "B_Calendar";
-            this.B_Calendar.Size = new System.Drawing.Size(75, 23);
-            this.B_Calendar.TabIndex = 10;
-            this.B_Calendar.Text = "月历";
-            this.B_Calendar.UseVisualStyleBackColor = true;
-            this.B_Calendar.Visible = false;
-            this.B_Calendar.Click += new System.EventHandler(this.B_Calendar_Click);
             // 
             // B_Test
             // 
@@ -177,7 +165,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(636, 338);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.B_Calendar);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.B_Test);
             this.Controls.Add(this.textBox1);
@@ -209,7 +196,6 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.Button B_Test;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button B_Calendar;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 设置ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 外勤ToolStripMenuItem;

@@ -47,12 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Calender.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Calender.Designer.cs">
-      <DependentUpon>Calender.cs</DependentUpon>
-    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,9 +74,6 @@
     <Compile Include="WfSetting.Designer.cs">
       <DependentUpon>WfSetting.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Calender.resx">
-      <DependentUpon>Calender.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

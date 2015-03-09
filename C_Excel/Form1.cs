@@ -656,8 +656,7 @@ namespace C_Excel
 
         private void B_Calendar_Click(object sender, EventArgs e)
         {
-            Calender cal = new Calender();
-            cal.Show();
+  
         }
 
         private void B_Test_Click(object sender, EventArgs e)
