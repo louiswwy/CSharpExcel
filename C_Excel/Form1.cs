@@ -65,7 +65,7 @@ namespace C_Excel
         private List<string> _laDuree;
         public List<string> LaDuree
         {
-            get{ return this._laDuree; }
+            get { return this._laDuree; }
             set { this._laDuree = value; }
         }
 
@@ -119,11 +119,12 @@ namespace C_Excel
                 this.pmTime = PmTime;
             }
         }
-                
+
         public class Member_Departement_Communications
         {
             private string _name;
-            public string name{
+            public string name
+            {
                 get { return this._name; }
                 set { this._name = value; }
             }
@@ -137,7 +138,7 @@ namespace C_Excel
 
 
             public Member_Departement_Communications()
-            {                
+            {
             }
             //private List<DateTime> _
             public Member_Departement_Communications(string Name)
@@ -195,7 +196,7 @@ namespace C_Excel
             }*/
         }
 
-        public class Member_Dep_Com_WorkingState:Member_Departement_Communications
+        public class Member_Dep_Com_WorkingState : Member_Departement_Communications
         {
             private int isLate;
             private int onTime;
@@ -231,7 +232,7 @@ namespace C_Excel
                 set { notSignOff = value; }
             }
 
-            public Member_Dep_Com_WorkingState(string WorkerName ,List<WorkTimeState> WorkTime_State, int WorkerIsLate, int WorkerOnTime, int DataInQuestion, int WorkerNotSignOff)
+            public Member_Dep_Com_WorkingState(string WorkerName, List<WorkTimeState> WorkTime_State, int WorkerIsLate, int WorkerOnTime, int DataInQuestion, int WorkerNotSignOff)
             {
                 this.name = WorkerName;
                 this.workTimeState = WorkTime_State;
@@ -248,7 +249,7 @@ namespace C_Excel
         /*
         public List<int> ListNotEmptyCol = new List<int>();
         */
-        public  List<Member_Departement_Communications> ListMemberSchedule;//=new List<Member_Departement_Communications>();
+        public List<Member_Departement_Communications> ListMemberSchedule;//=new List<Member_Departement_Communications>();
         //ListMemberSchedule
         //本地电脑时间.
         public DateTime NowTime;
@@ -365,7 +366,7 @@ namespace C_Excel
         public void StartTimer()
         {
             this.timer1.Enabled = true;
-            this.timer1.Start();            
+            this.timer1.Start();
         }
 
         //在界面底部显示现在时间,每秒刷新
@@ -407,7 +408,7 @@ namespace C_Excel
                 fileName = fileDialog.FileName;
                 //fileType=fileDialog.f
             }
-
+            fileDialog.Dispose();
             return fileName;
         }
 
@@ -417,8 +418,10 @@ namespace C_Excel
             {
                 string strConn;
                 //         Provider=Microsoft.Ace.OleDb.12.0;"  Provider=Microsoft.Jet.OLEDB.4.0                     12/8
-                strConn = "Provider=Microsoft.Ace.OleDb.12.0;Data Source=" + filePath + ";Extended Properties='Excel 8.0;HDR=NO;IMEX=1'";
+                strConn = "Provider=Microsoft.ACE.OlEDB.12.0;Data Source=" + filePath + ";Extended Properties='Excel 8.0;HDR=NO;IMEX=1'";
+
                 OleDbConnection OleConn = new OleDbConnection(strConn);
+
                 OleConn.Open();
                 String sql = "SELECT * FROM  [Sheet1$]";//可是更改Sheet名称，比如sheet2，等等   
 
@@ -426,6 +429,7 @@ namespace C_Excel
                 DataSet OleDsExcle = new DataSet();
                 OleDaExcel.Fill(OleDsExcle, "Sheet1");
                 OleConn.Close();
+
                 return OleDsExcle;
             }
             catch (Exception err)
@@ -523,7 +527,7 @@ namespace C_Excel
 
                 foreach (XmlNode node in NodeWorkTime.ChildNodes)//循环子节点
                 {
-                    
+
                 }
             }
             catch (Exception ex)
@@ -549,8 +553,8 @@ namespace C_Excel
 
         //考勤情况
         public void WorkingPassion(List<Member_Departement_Communications> MCs)
-        {    
-            
+        {
+
             string StateOfEmployer = null;
 
             foreach (Member_Departement_Communications mc in MCs)
@@ -654,8 +658,10 @@ namespace C_Excel
 
 
 
-    
+        private void B_Calendar_Click(object sender, EventArgs e)
+        {
 
+        }
 
         private void B_Test_Click(object sender, EventArgs e)
         {
@@ -673,7 +679,7 @@ namespace C_Excel
                 foreach (string c in b)
                 {
                     d = d + c + "+++";
-                    
+
                 }
                 //textBox2.Text = d;
                 //CompareTime(Convert.ToDateTime(b[0]), Convert.ToDateTime(b[1]));
@@ -851,11 +857,10 @@ namespace C_Excel
                                         {
                                             bool isWorkingOk;
                                             wt = fcs.ConvertStringToDateTime(dataInCol, inDate, out isWorkingOk);
-
-                                        }
-                                        if (!isWorkingOk)
-                                        {
-                                            MessageBox.Show("数据读取错误.", "警告", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                                            if (!isWorkingOk)
+                                            {
+                                                MessageBox.Show("数据读取错误.", "警告", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                                            }
                                         }
 
                                         listWorkTime.Add(wt);
@@ -881,7 +886,7 @@ namespace C_Excel
                     MQJ = new Member_QingJia();
                     MQJ.MdiParent = this;
                     MQJ.Show();
-                    this.Size = new Size(MQJ.Width+30, MQJ.Height + 100);
+                    this.Size = new Size(MQJ.Width + 30, MQJ.Height + 100);
 
                     //formMember.ShowDialog(this);
                     //formMember.Close();
@@ -919,8 +924,8 @@ namespace C_Excel
         {
             if (formOutPut != null)
             {
-                formOutPut.Location = (Point)new Size(this.Location.X + this.Width, this.Location.Y); 
-           
+                formOutPut.Location = (Point)new Size(this.Location.X + this.Width, this.Location.Y);
+
             }
         }
 
@@ -928,11 +933,14 @@ namespace C_Excel
         {
             if (formOutPut != null)
             {
-                Size _size=formOutPut.Size;
+                Size _size = formOutPut.Size;
                 formOutPut.Size = new Size(_size.Width, this.Size.Height);
-                formOutPut.Location = (Point)new Size(this.Location.X + this.Width, this.Location.Y); 
+                formOutPut.Location = (Point)new Size(this.Location.X + this.Width, this.Location.Y);
 
             }
         }
+
+
+
     }
 }
