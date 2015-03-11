@@ -6,7 +6,7 @@ using System.Data.OleDb;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+//using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 using System.Data.Odbc;
 using System.Reflection;
 
-/*using NPOI;
+using NPOI;
 using NPOI.HPSF;
 using NPOI.HSSF;
 using NPOI.HSSF.UserModel;
@@ -25,8 +25,7 @@ using NPOI.Util;
 using NPOI.XSSF.UserModel;
 using NPOI.XSSF;
 using NPOI.SS.UserModel;
-*/
-//using Excel.
+
 
 namespace C_Excel
 {
@@ -1107,7 +1106,7 @@ namespace C_Excel
         }
         #endregion  
         */
-        /*
+        
         #region Excel2007
         /// <summary>
         /// 将Excel文件中的数据读出到DataTable中(xlsx)
@@ -1123,7 +1122,24 @@ namespace C_Excel
                 ISheet sheet = xssfworkbook.GetSheetAt(0);
 
                 //表头
-                IRow header = sheet.GetRow(sheet.FirstRowNum);
+                //IRow header = sheet.GetRow(sheet.FirstRowNum);
+
+                int maxCol = 0;
+                int rowWithMaxCol = 0;
+                for (int nR = 0; nR < 10; nR++)
+                {
+                    IRow rowWithMostCol = sheet.GetRow(nR);
+                    int cellCount = rowWithMostCol.LastCellNum; //一行最后一个cell的编号 即总的列数
+
+                    if (maxCol < cellCount)
+                    {
+                        maxCol = cellCount;
+                        rowWithMaxCol = nR;
+                    }
+                }
+
+                IRow header = sheet.GetRow(rowWithMaxCol);
+
                 List<int> columns = new List<int>();
                 for (int i = 0; i < header.LastCellNum; i++)
                 {
@@ -1134,7 +1150,10 @@ namespace C_Excel
                         //continue;
                     }
                     else
+                    {
                         dt.Columns.Add(new DataColumn(obj.ToString()));
+                    }
+                        
                     columns.Add(i);
                 }
                 //数据
@@ -1158,6 +1177,16 @@ namespace C_Excel
             }
             return dt;
         }
+        
+
+
+        /// <summary>
+        /// 将excel中的数据导入到DataTable中
+        /// </summary>
+        /// <param name="sheetName">excel工作薄sheet的名称</param>
+        /// <param name="isFirstRowColumn">第一行是否是DataTable的列名</param>
+        /// <returns>返回的DataTable</returns>
+        
 
         /// <summary>
         /// 将DataTable数据导出到Excel文件中(xlsx)
@@ -1167,7 +1196,7 @@ namespace C_Excel
         public static void TableToExcelForXLSX(DataTable dt, string file)
         {
             XSSFWorkbook xssfworkbook = new XSSFWorkbook();
-            ISheet sheet = xssfworkbook.CreateSheet("Test");
+            ISheet sheet = xssfworkbook.CreateSheet("sheet");
 
             //表头
             IRow row = sheet.CreateRow(0);
@@ -1229,7 +1258,40 @@ namespace C_Excel
         }
 
         #endregion
-        */
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string filePath = null;
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Multiselect = true;
+            fileDialog.Title = "请选择文件.";
+            fileDialog.Filter = "Excel97-2003文件|*.xls;*.xlt;*.xltm|Excel2007-2010|*.xlsx|所有文件(*.*)|*.*";
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                filePath = fileDialog.FileName;
+                DataTable dt = ExcelToTableForXLSX(filePath);
+                dataGridView1.DataSource = dt;
+                /*try
+                 * 
+                {
+                    using (NetUtilityLib.ExcelHelper excelHelper = new NetUtilityLib.ExcelHelper(filePath))
+                    {
+                        DataTable dt = excelHelper.ExcelToDataTable("Sheet1", false);
+                        dataGridView1.DataSource = dt;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception: " + ex.Message);
+                }*/
+            }
+            
+            //NetUtilityLib.ExcelHelper Excelhelper = new NetUtilityLib.ExcelHelper(filePath);
+
+
+            
+        }
+        
 
 
     }
