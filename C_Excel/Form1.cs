@@ -14,8 +14,9 @@ using System.Xml;
 
 using System.Text.RegularExpressions;
 using System.Data.Odbc;
+using System.Reflection;
 
-using NPOI;
+/*using NPOI;
 using NPOI.HPSF;
 using NPOI.HSSF;
 using NPOI.HSSF.UserModel;
@@ -24,7 +25,7 @@ using NPOI.Util;
 using NPOI.XSSF.UserModel;
 using NPOI.XSSF;
 using NPOI.SS.UserModel;
-
+*/
 //using Excel.
 
 namespace C_Excel
@@ -250,6 +251,7 @@ namespace C_Excel
                 this.workerNotSignOff = WorkerNotSignOff;
             }
         }
+
         FunctionsCS fcs = new FunctionsCS();
 
         public List<WorkTime> listWorkTime; //上班时间
@@ -453,15 +455,34 @@ namespace C_Excel
         {
             try
             {
+                var folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                //var configPath = Path.Combine(folderPath, "DataFile");
+
+                string pathXmlFile = "";
+                //configPath + @"\WorkTime.xml"
+
+#if DEBUG
+                pathXmlFile = @"..\..\DataFile\WorkTime.xml";
+#else
+                pathXmlFile = folderPath + @"\WorkTime.xml";
+#endif
+                StringBuilder sttr=new StringBuilder();
+
                 XmlDocument xmldoc = new XmlDocument();
-                try
+                if (System.IO.File.Exists(pathXmlFile))
                 {
-                    xmldoc.Load(@"..\..\DataFile\WorkTime.xml");    //读取指定的XML文档                    
+                    sttr.Append("-1-");
+                    sttr.Append(pathXmlFile);
+                    xmldoc.Load(pathXmlFile);    //读取指定的XML文档                    
                 }
-                catch (Exception)
+                else
                 {
-                    CreateXml(@"..\..\DataFile\WorkTime.xml");//如果程序没有找到xml文件，则新建一个
+                    sttr.Append("-2-");
+                    sttr.Append(pathXmlFile);
+                    CreateXml(xmldoc, pathXmlFile);//如果程序没有找到xml文件，则新建一个
                 }
+
+
                 XmlNode NodeWorkTime = xmldoc.DocumentElement;  //读取xml的根节点
 
                 foreach (XmlNode node in NodeWorkTime.ChildNodes)//循环子节点
@@ -476,7 +497,7 @@ namespace C_Excel
                             else
                             {
                                 node.InnerText = "8:46";
-                                xmldoc.Save(@"..\..\DataFile\WorkTime.xml");
+                                xmldoc.Save(pathXmlFile);
                             }
 
                             break;
@@ -489,7 +510,7 @@ namespace C_Excel
                             else
                             {
                                 node.InnerText = "17:30";
-                                xmldoc.Save(@"..\..\DataFile\WorkTime.xml");
+                                xmldoc.Save(pathXmlFile);
                             }
                             break;
                     }
@@ -502,9 +523,9 @@ namespace C_Excel
         }
 
         //创建WorkTime.xml文件
-        public void CreateXml(string path)
+        public void CreateXml(XmlDocument xmldoc, string path)
         {
-            XmlDocument xmldoc = new XmlDocument();
+            //xmldoc = new XmlDocument();
             XmlNode xmlnode = xmldoc.CreateNode(XmlNodeType.XmlDeclaration, "", "");//加入XML的声明段落
             xmldoc.AppendChild(xmlnode);
             XmlElement xmlelem = xmldoc.CreateElement("workTime");
@@ -518,7 +539,7 @@ namespace C_Excel
             xmldoc.Save(path);// @"..\..\DataFile\WorkTime.xml");
         }
 
-        public void XmlMemberList()
+        /*public void XmlMemberList()
         {
             try
             {
@@ -529,7 +550,7 @@ namespace C_Excel
                 }
                 catch (Exception)
                 {
-                    CreateXml(@"..\..\DataFile\ListMemberName.xml");//如果程序没有找到xml文件，则新建一个
+                    CreateXml(xmldoc, @"..\..\DataFile\ListMemberName.xml");//如果程序没有找到xml文件，则新建一个
                 }
                 XmlNode NodeWorkTime = xmldoc.DocumentElement;  //读取xml的根节点
 
@@ -542,7 +563,7 @@ namespace C_Excel
             {
                 MessageBox.Show("" + ex, "错误");
             }
-        }
+        }*/
         #endregion
 
 
@@ -1086,7 +1107,7 @@ namespace C_Excel
         }
         #endregion  
         */
-        
+        /*
         #region Excel2007
         /// <summary>
         /// 将Excel文件中的数据读出到DataTable中(xlsx)
@@ -1208,7 +1229,7 @@ namespace C_Excel
         }
 
         #endregion
-
+        */
 
 
     }

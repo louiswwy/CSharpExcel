@@ -898,7 +898,6 @@
             this.Text = "员工请假/出差表";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Member_QingJia_FormClosing);
             this.Load += new System.EventHandler(this.Member_QingJia_Load);
-            this.Resize += new System.EventHandler(this.Member_QingJia_Resize);
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

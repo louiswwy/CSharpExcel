@@ -75,7 +75,7 @@
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.button1);
             this.Name = "output";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "output";
             this.Resize += new System.EventHandler(this.output_Resize);
             this.ResumeLayout(false);

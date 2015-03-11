@@ -133,16 +133,12 @@ namespace C_Excel
         DateTime AfternoonTime; // = fom.SetLimDissmisTime;
 
         List<Member_Leave> Member_NotShowUp = new List<Member_Leave>();
-        int _dayInWeek = 0;
+        //int _dayInWeek = 0;
         public Member_QingJia()
         {
             InitializeComponent();            
         }
-
-        public delegate void MyDelegate();
-        //定义事件
-        public event MyDelegate PantResultatEvent;
-
+        
         output formOutPut = null;
         private void B_Valide_Click(object sender, EventArgs e)
         {
@@ -251,7 +247,7 @@ namespace C_Excel
         private void comboxMember_SelectionChangeCommitted(object sender, EventArgs e)
         {
 
-            if (comboxMember.SelectedItem != null && comboxMember.SelectedItem != "")
+            if (comboxMember.SelectedItem != null && comboxMember.SelectedItem.ToString() != "")
             {
                 //if (/*!listPassedMember.Contains(this.comboxMember.SelectedItem.ToString()) ||*/ listPassedMember.Count == 0)
                 //{
@@ -883,16 +879,7 @@ namespace C_Excel
             toolState.Text = "取消 " + toolInformation + " " + comboxMember.SelectedItem.ToString() + "申请事假"; 
         }
 
-        private void Member_QingJia_Resize(object sender, EventArgs e)
-        {
 
-            if (((Form1)this.MdiParent).LaDuree.Count != 0)
-            {
-                List<string> a = ((Form1)this.MdiParent).LaDuree;
-                string _str = a[0] + " -- " + a[3];
-
-            }
-        }
 
 
         public void WorkingPassion(List<Form1.Member_Departement_Communications> MCs)
@@ -982,7 +969,7 @@ namespace C_Excel
             return inTheList;
         }
 
-        DateTime[] listDT;
+        //DateTime[] listDT;
 
         public void fileTheCalendar()
         {

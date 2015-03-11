@@ -10,9 +10,9 @@ using System.Windows.Forms;
 using System.IO;
 using Microsoft.Office.Interop.Excel;
 using System.Reflection;
-using NPOI.HSSF.UserModel;
-using NPOI.XSSF.UserModel;
-using NPOI.SS.UserModel;
+//using NPOI.HSSF.UserModel;
+//using NPOI.XSSF.UserModel;
+//using NPOI.SS.UserModel;
 
 namespace C_Excel
 {
@@ -89,14 +89,19 @@ namespace C_Excel
                 {
                     System.Data.DataTable ExcelTable = null;
                     ExcelTable = CreateDataSet(localMSs).Tables[0];
-
+                    DateTime startTime;
+                    DateTime endTime;
                     using (var sfd = new SaveFileDialog())
                     {
-                        sfd.Filter = "Excel97-2003文件|*.xls;*.xlt;*.xltm|Excel2007-2010|*.xlsx|所有文件(*.*)|*.*";
+                        sfd.Filter = "Excel97-2003文件|*.xls;*.xlt;*.xltm|所有文件(*.*)|*.*";
                         sfd.FileName = duree[0] + "至" + duree[4] + "考勤记录统计";
+                        startTime = DateTime.Now;
                         if (sfd.ShowDialog() == DialogResult.OK && sfd.FileName != "")
                         {
                             SaveDataTableToExcel(ExcelTable, sfd.FileName);
+                            endTime = DateTime.Now;
+                            TimeSpan TakeTime = endTime - startTime;
+                            MessageBox.Show("储存完毕" + System.Environment.NewLine + "耗时:" + TakeTime.ToString(), "完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                     }
 

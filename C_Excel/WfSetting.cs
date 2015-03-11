@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -67,7 +69,20 @@ namespace C_Excel
                 try
                 {
                     xmldoc = new XmlDocument();//@"..\..\Book.xml")
-                    xmldoc.Load(@"..\..\DataFile\WorkTime.xml");    //读取指定的XML文档
+
+#if debug
+                    string XmlFilePath = @"..\..\DataFile\WorkTime.xml";
+
+
+#else
+                    var folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+                    string XmlFilePath = folderPath + @"\WorkTime.xml";//Environment.CurrentDirectory + @"..\..\..\..\DataFile\WorkTime.xml";
+
+#endif
+
+                    xmldoc.Load(XmlFilePath);    //读取指定的XML文档
+                    
                     XmlElement xe = xmldoc.DocumentElement;//获取xml文档的根xmlelement
 
                     if (xe.HasChildNodes)
@@ -94,7 +109,7 @@ namespace C_Excel
                             {
                                 xmldoc.GetElementsByTagName("ShowUpTime")[0].InnerText = T_ShowUp.Text.ToString();
                                 xmldoc.GetElementsByTagName("dissmisTime")[0].InnerText = T_Dissmis.Text.ToString();
-                                xmldoc.Save(@"..\..\DataFile\WorkTime.xml");
+                                xmldoc.Save(XmlFilePath);
 
                                 //LimitShowUpTime = Convert.ToDateTime(T_ShowUp.Text.ToString() + ":00");
                                 //LimitDismissTime = Convert.ToDateTime(T_Dissmis.Text.ToString() + ":00");
@@ -136,10 +151,29 @@ namespace C_Excel
         {
             try
             {
+                
                 xmldoc = new XmlDocument();
-                if (System.IO.File.Exists(@"..\..\DataFile\WorkTime.xml"))
+#if DEBUG
+                
+                string ProgramInstalPath = "";
+                ProgramInstalPath = Application.StartupPath.ToString();
+
+                string XmlFilePath = @"..\..\DataFile\WorkTime.xml";
+#else
+                //string XmlFilePath = @"..\..\..\..\DataFile\WorkTime.xml";
+
+
+                string ProgramInstalPath = "";
+                //ProgramInstalPath = Application.CommonAppDataPath.ToString();
+                var folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+                string XmlFilePath = folderPath + @"\WorkTime.xml";//Environment.CurrentDirectory + @"..\..\..\..\DataFile\WorkTime.xml";
+
+#endif
+
+                if (System.IO.File.Exists(XmlFilePath))
                 {
-                    xmldoc.Load(@"..\..\DataFile\WorkTime.xml");    //读取指定的XML文档
+                    xmldoc.Load(XmlFilePath);    //读取指定的XML文档
                     XmlNode NodeWorkTime = xmldoc.DocumentElement;  //读取xml的根节点
 
                     foreach (XmlNode node in NodeWorkTime.ChildNodes)//循环子节点
@@ -167,7 +201,7 @@ namespace C_Excel
                 {
 
 
-                    string path = @"..\..\DataFile\WorkTime.xml";
+                    /*string path = XmlFilePath;
 
                     //XDocument xdoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
                     //
@@ -183,7 +217,8 @@ namespace C_Excel
                         new XElement("dissmisTime", "17:30")
                         );
 
-                    root.Save(path);
+                    root.Save(path);*/
+                    MessageBox.Show(XmlFilePath);
 
                 }
             }

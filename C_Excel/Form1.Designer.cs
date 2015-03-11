@@ -125,6 +125,7 @@
             this.输出ToolStripMenuItem.Name = "输出ToolStripMenuItem";
             this.输出ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.输出ToolStripMenuItem.Text = "输出";
+            this.输出ToolStripMenuItem.Visible = false;
             this.输出ToolStripMenuItem.Click += new System.EventHandler(this.输出ToolStripMenuItem_Click);
             // 
             // 设置ToolStripMenuItem
@@ -157,17 +158,21 @@
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.Size = new System.Drawing.Size(294, 221);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.Visible = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackgroundImage = global::C_Excel.Properties.Resources.logo;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(636, 338);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.B_Test);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.statusStrip1);
+            this.DoubleBuffered = true;
             this.HelpButton = true;
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
