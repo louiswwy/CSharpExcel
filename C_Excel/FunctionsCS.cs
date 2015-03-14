@@ -88,16 +88,21 @@ namespace C_Excel
                 PmTime = new Form1.PMTime(Convert.ToDateTime(MathGroup[2] + ":" + MathGroup[3]).TimeOfDay);
                 dateTime = new Form1.WorkTime(strDate, AmTime, PmTime);//(AmTime, PmTime);
             }
-            else if (isExMatch(strTime.Replace(" ", ""), @"^0.\d*$", out MathGroup))
+                //匹配为0.xxxxx时
+            else if (isExMatch(strTime.Replace(" ", ""), @"^(0.\d*)$", out MathGroup))
             {
                 //MessageBox.Show("error");
-                isWorkingOkState = false;
+                double dateDouble = Convert.ToDouble(MathGroup[0]);
+                DateTime dt = DateTime.FromOADate(dateDouble);
+                AmTime = new Form1.AMTime(dt.TimeOfDay);
+                dateTime = new Form1.WorkTime(strDate, AmTime);//(AmTime);
+                //ConvertStringToDateTime = false;
             }
             else
             {
-                string aaa = strTime;
+                /*string aaa = strTime;
                 AmTime = new Form1.AMTime(Convert.ToDateTime(strTime).TimeOfDay);//.ToShortTimeString()));
-                dateTime = new Form1.WorkTime(strDate, AmTime);
+                dateTime = new Form1.WorkTime(strDate, AmTime);*/
             }
 
             workState = isWorkingOkState;

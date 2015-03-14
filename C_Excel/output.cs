@@ -10,6 +10,10 @@ using System.Windows.Forms;
 using System.IO;
 using Microsoft.Office.Interop.Excel;
 using System.Reflection;
+
+using NPOI.XSSF.UserModel;
+using NPOI.SS.UserModel;
+
 //using NPOI.HSSF.UserModel;
 //using NPOI.XSSF.UserModel;
 //using NPOI.SS.UserModel;
@@ -98,7 +102,8 @@ namespace C_Excel
                         startTime = DateTime.Now;
                         if (sfd.ShowDialog() == DialogResult.OK && sfd.FileName != "")
                         {
-                            SaveDataTableToExcel(ExcelTable, sfd.FileName);
+                            //SaveDataTableToExcel(ExcelTable, sfd.FileName);
+                            TableToExcelForXLSX(ExcelTable, sfd.FileName);
                             endTime = DateTime.Now;
                             TimeSpan TakeTime = endTime - startTime;
                             MessageBox.Show("储存完毕" + System.Environment.NewLine + "耗时:" + TakeTime.ToString(), "完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -202,6 +207,7 @@ namespace C_Excel
             return retenuDataSet;
         }
 
+        /* 不使用office提供的方法以防客户电脑未安装office
         public static bool SaveDataTableToExcel(System.Data.DataTable excelTable, string filePath)
         {
             Microsoft.Office.Interop.Excel.Application app = new Microsoft.Office.Interop.Excel.Application();
@@ -256,7 +262,45 @@ namespace C_Excel
             }
             
         }
+        */
 
+
+        public static void TableToExcelForXLSX(System.Data.DataTable dt, string file)
+        {
+            XSSFWorkbook xssfworkbook = new XSSFWorkbook();
+            ISheet sheet = xssfworkbook.CreateSheet("sheet");
+
+            //表头
+            IRow row = sheet.CreateRow(0);
+            for (int i = 0; i < dt.Columns.Count; i++)
+            {
+                ICell cell = row.CreateCell(i);
+                cell.SetCellValue(dt.Columns[i].ColumnName);
+            }
+
+            //数据
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                IRow row1 = sheet.CreateRow(i + 1);
+                for (int j = 0; j < dt.Columns.Count; j++)
+                {
+                    ICell cell = row1.CreateCell(j);
+                    cell.SetCellValue(dt.Rows[i][j].ToString());
+                }
+            }
+
+            //转为字节数组
+            MemoryStream stream = new MemoryStream();
+            xssfworkbook.Write(stream);
+            var buf = stream.ToArray();
+
+            //保存为Excel文件
+            using (FileStream fs = new FileStream(file, FileMode.Create, FileAccess.Write))
+            {
+                fs.Write(buf, 0, buf.Length);
+                fs.Flush();
+            }
+        }
 
     }
 }

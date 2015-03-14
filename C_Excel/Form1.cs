@@ -421,6 +421,7 @@ namespace C_Excel
             return fileName;
         }
 
+        /*
         public static DataSet LoadDataFromExcel(string filePath)
         {
             try
@@ -448,6 +449,7 @@ namespace C_Excel
                 return null;
             }
         }
+        */
 
         #region 处理xml
         public void LoadWorkTime()
@@ -794,9 +796,11 @@ namespace C_Excel
             {
                 if (FilePath != "" && FilePath != null)
                 {
-                    DataSet DS = LoadDataFromExcel(FilePath);
+                    //DataSet DS = LoadDataFromExcel(FilePath);
 
-                    DataTable DT = DS.Tables[0];
+                    //DataTable DT = DS.Tables[0];
+
+                    DataTable DT = ExcelToTableForXLSX(FilePath);
 
                     List<string> st = new List<string>();
 
@@ -861,12 +865,12 @@ namespace C_Excel
                                 //ListMemberSchedule;
 
                                 //读取当单元格数据为 “数字（2位）汉字（一位）” 时读取下一行，同一排单元格的数据
-                                List<string> inDate = new List<string>();
-                                if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out inDate))
+                                List<string> inWhichDay = new List<string>();
+                                if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^([0-3]\d)(一|二|三|四|五|六|日)$", out inWhichDay))
                                 {
 
-                                    string a = inDate[0];
-                                    string b = inDate[1];
+                                    string a = inWhichDay[0];
+                                    string b = inWhichDay[1];
                                     if (countDay <= Convert.ToInt32(endD))
                                     {
                                         countDay++;
@@ -879,12 +883,12 @@ namespace C_Excel
 
                                         if (dataInCol.Replace(" ", "") == "-" || dataInCol.Replace(" ", "") == "")
                                         {
-                                            wt = new WorkTime(inDate);
+                                            wt = new WorkTime(inWhichDay);
                                         }
                                         else
                                         {
                                             bool isWorkingOk;
-                                            wt = fcs.ConvertStringToDateTime(dataInCol, inDate, out isWorkingOk);
+                                            wt = fcs.ConvertStringToDateTime(dataInCol, inWhichDay, out isWorkingOk);
                                             if (!isWorkingOk)
                                             {
                                                 MessageBox.Show("数据读取错误.", "警告", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -900,6 +904,14 @@ namespace C_Excel
                                     {
 
                                     }
+                                }
+                                    //isExMatch(strTime.Replace(" ", ""), @"^(0.\d*)$", out MathGroup))
+                                else if (fcs.isExMatch(dr[dc].ToString().Replace(" ", ""), @"^(0.\d*)$", out inWhichDay))
+                                {
+                                    double timeDouble= Convert.ToDouble(dr[dc]);
+                                    DateTime dateTime = DateTime.FromOADate(timeDouble);
+                                    TimeSpan timeSpan=dateTime.TimeOfDay;
+                                    dr[dc] = timeSpan.ToString();
                                 }
 
                             }
@@ -968,22 +980,7 @@ namespace C_Excel
             }
         }
 
-        /*
-        private void button1_Click(object sender, EventArgs e)
-        {
-            string filePath=null;
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.Multiselect = true;
-            fileDialog.Title = "请选择文件.";
-            fileDialog.Filter = "Excel97-2003文件|*.xls;*.xlt;*.xltm|Excel2007-2010|*.xlsx|所有文件(*.*)|*.*";
-            if (fileDialog.ShowDialog() == DialogResult.OK)
-            {
-                filePath = fileDialog.FileName;
-                //fileType=fileDialog.f
-            }
-            DataTable dt = ExcelToTableForXLSX(filePath);
-            dataGridView1.DataSource = dt;
-        }*/
+
         /*
         #region Excel2003
         /// <summary>  
@@ -1163,6 +1160,7 @@ namespace C_Excel
                     bool hasValue = false;
                     foreach (int j in columns)
                     {
+                        //dr[j]=row
                         dr[j] = GetValueTypeForXLSX(sheet.GetRow(i).GetCell(j) as XSSFCell);
                         if (dr[j] != null && dr[j].ToString() != string.Empty)
                         {
@@ -1197,43 +1195,7 @@ namespace C_Excel
         /// </summary>
         /// <param name="dt"></param>
         /// <param name="file"></param>
-        public static void TableToExcelForXLSX(DataTable dt, string file)
-        {
-            XSSFWorkbook xssfworkbook = new XSSFWorkbook();
-            ISheet sheet = xssfworkbook.CreateSheet("sheet");
-
-            //表头
-            IRow row = sheet.CreateRow(0);
-            for (int i = 0; i < dt.Columns.Count; i++)
-            {
-                ICell cell = row.CreateCell(i);
-                cell.SetCellValue(dt.Columns[i].ColumnName);
-            }
-
-            //数据
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                IRow row1 = sheet.CreateRow(i + 1);
-                for (int j = 0; j < dt.Columns.Count; j++)
-                {
-                    ICell cell = row1.CreateCell(j);
-                    cell.SetCellValue(dt.Rows[i][j].ToString());
-                }
-            }
-
-            //转为字节数组
-            MemoryStream stream = new MemoryStream();
-            xssfworkbook.Write(stream);
-            var buf = stream.ToArray();
-
-            //保存为Excel文件
-            using (FileStream fs = new FileStream(file, FileMode.Create, FileAccess.Write))
-            {
-                fs.Write(buf, 0, buf.Length);
-                fs.Flush();
-            }
-        }
-
+        
         /// <summary>
         /// 获取单元格类型(xlsx)
         /// </summary>
@@ -1263,40 +1225,14 @@ namespace C_Excel
 
         #endregion
 
-        private void button1_Click(object sender, EventArgs e)
+
+        private void button2_Click_1(object sender, EventArgs e)
         {
-            string filePath = null;
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.Multiselect = true;
-            fileDialog.Title = "请选择文件.";
-            fileDialog.Filter = "Excel97-2003文件|*.xls;*.xlt;*.xltm|Excel2007-2010|*.xlsx|所有文件(*.*)|*.*";
-            if (fileDialog.ShowDialog() == DialogResult.OK)
-            {
-                filePath = fileDialog.FileName;
-                DataTable dt = ExcelToTableForXLSX(filePath);
-                dataGridView1.DataSource = dt;
-                /*try
-                 * 
-                {
-                    using (NetUtilityLib.ExcelHelper excelHelper = new NetUtilityLib.ExcelHelper(filePath))
-                    {
-                        DataTable dt = excelHelper.ExcelToDataTable("Sheet1", false);
-                        dataGridView1.DataSource = dt;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Exception: " + ex.Message);
-                }*/
-            }
-            
-            //NetUtilityLib.ExcelHelper Excelhelper = new NetUtilityLib.ExcelHelper(filePath);
-
-
-            
+            double dateDouble = 0.347222222222222;
+            DateTime dt = DateTime.FromOADate(dateDouble);
+            string dateString = dt.ToString();
+            ///textBox2.Text = dateString;
         }
-        
-
 
     }
 }

@@ -76,7 +76,7 @@
             this.Controls.Add(this.button1);
             this.Name = "output";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "output";
+            this.Text = "统计数据输出";
             this.Resize += new System.EventHandler(this.output_Resize);
             this.ResumeLayout(false);
             this.PerformLayout();
